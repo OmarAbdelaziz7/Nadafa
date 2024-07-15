@@ -5,7 +5,7 @@ namespace Application
 {
     public static class ApplicationServices
     {
-        public static IServiceCollection AddDomainServices(this IServiceCollection services)
+        public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
             //services.AddScoped<IUnitOfWork, UnitOfWork>();
             //services.AddScoped<ISP_Call, SP_Call>();
