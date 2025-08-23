@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+import { provideZonelessChangeDetection } from '@angular/core';
+>>>>>>> 232b30b9a631aada6b497df1034d5b30ba7ed3eb
 import { TestBed } from '@angular/core/testing';
 import { App } from './app';
 
@@ -5,6 +9,10 @@ describe('App', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
+<<<<<<< HEAD
+=======
+      providers: [provideZonelessChangeDetection()]
+>>>>>>> 232b30b9a631aada6b497df1034d5b30ba7ed3eb
     }).compileComponents();
   });
 
