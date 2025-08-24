@@ -9,7 +9,7 @@ import { Component } from '@angular/core';
 export class Login {
 
 }
-import { Component, inject, signal } from '@angular/core';
+import { inject, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -18,7 +18,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { AuthService } from '../core/auth/auth.service';
+import { AuthService } from '../../../core/auth/auth.service';
 import { NgIf } from '@angular/common';
 
 @Component({

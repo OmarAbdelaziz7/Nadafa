@@ -7,8 +7,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { passwordMatchValidator } from '../shared/password-match.validator';
-import { AuthService } from '../core/auth/auth.service';
+import { passwordMatchValidator } from '../../../shared/password-match.validator';
+import { AuthService } from '../../../core/auth/auth.service';
 
 @Component({
   standalone: true,
