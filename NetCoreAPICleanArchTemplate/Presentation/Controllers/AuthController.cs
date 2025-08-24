@@ -13,13 +13,30 @@ namespace Presentation.Controllers
     [ApiController]
     public class AuthController : AppControllerBase
     {
-        [HttpPost("register")]
-        public IActionResult Register([FromBody] RegisterDTO registerDTO)
+        [HttpPost("register/user")]
+        public IActionResult Register([FromBody] RegisterUserDTO registerDTO)
         {
             // call the service to register the user
             // return the result
             return Ok(registerDTO);
             
+        }
+
+        [HttpPost("register/factory")]
+
+        public IActionResult RegisterFactory([FromBody] RegisterFactoryDTO registerDTO)
+        {
+            // call the service to register the factory
+            // return the result
+            return Ok(registerDTO);
+        }
+
+        [HttpPost("login")]
+        public IActionResult Login([FromBody] LoginDTO loginDTO)
+        {
+            // call the service to login the user or factory
+            // return the result
+            return Ok(loginDTO);
         }
     }
 }

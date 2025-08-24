@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Domain.Results;
 
-namespace Application.Contracts
+namespace Application.DTOs.AuthDTOs
 {
-    public interface ITokenService
+    public class AuthResponseDTO : Response<
     {
-        string CreateToken(string userEmail);
+        int userId;
+       
+
     }
 }

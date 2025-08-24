@@ -13,5 +13,7 @@ namespace Domain.Entities
         public string Email { get; set; }
         public string HashedPassword { get; set; }
         public DateTime createdAt { get; set; } = DateTime.UtcNow;
+
+        public DateTime UpdatedAt { get; set; }
     }
 }

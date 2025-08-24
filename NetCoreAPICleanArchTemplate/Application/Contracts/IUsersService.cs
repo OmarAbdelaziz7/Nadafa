@@ -5,12 +5,8 @@ using Domain.Results;
 
 namespace Application.Contracts
 {
-    public interface IUsersService
+    public interface IUsersService : IGeneralRepoistory<ApplicationUser>
     {
-        public Response<List<User>> getAll();
-        public Response<User> get();
-        public Response<User> add();
-        public Response<User> update();
-        public Response<string> delete();
+       
     }
 }
