@@ -35,4 +35,12 @@ export class AuthService {
     // return this.http.post<{ok:boolean}>(`${this.baseUrl}/resend-confirmation`, { email });
     return of({ ok: true }).pipe(delay(800));
   }
+
+    isLoggedIn(): boolean {
+    return !!localStorage.getItem('token');
+  }
+
+  logout() {
+    localStorage.removeItem('token');
+  }
 }

@@ -77,20 +77,26 @@ export class LoginComponent {
     password: ['', [Validators.required, Validators.minLength(6)]],
   });
 
-  onSubmit() {
-    if (this.form.invalid) return;
-    this.loading.set(true);
-    const { email, password } = this.form.getRawValue();
-    this.auth.login(email, password).subscribe({
-      next: () => {
-        this.loading.set(false);
-        this.snack.open('Logged in. Welcome back! 🔐', 'OK', { duration: 2000 });
-        this.router.navigateByUrl('/');
-      },
-      error: () => {
-        this.loading.set(false);
-        this.snack.open('Login failed. Check credentials.', 'OK', { duration: 2500 });
-      }
-    });
-  }
+onSubmit() {
+  if (this.form.invalid) return;
+  this.loading.set(true);
+
+  const { email, password } = this.form.getRawValue();
+  this.auth.login(email, password).subscribe({
+    next: (response) => {
+      this.loading.set(false);
+      // Save the token or flag in localStorage
+      localStorage.setItem('token', response.token || 'dummy-token'); 
+      // show snackbar
+      this.snack.open('Logged in. Welcome back! 🔐', 'OK', { duration: 2000 });
+      // navigate to /
+      this.router.navigateByUrl('/', { replaceUrl: true });
+    },
+    error: () => {
+      this.loading.set(false);
+      this.snack.open('Login failed. Check credentials.', 'OK', { duration: 2500 });
+    }
+  });
+}
+
 }

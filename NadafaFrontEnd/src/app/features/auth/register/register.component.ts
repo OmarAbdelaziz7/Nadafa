@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router,RouterLink } from '@angular/router';
 import { NgIf } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -59,6 +59,7 @@ export class RegisterComponent {
   private fb = inject(FormBuilder);
   private snack = inject(MatSnackBar);
   private auth = inject(AuthService);
+  private router = inject(Router);
 
   loading = false;
 
@@ -77,6 +78,7 @@ export class RegisterComponent {
       next: () => {
         this.loading = false;
         this.snack.open('Account created. Check your email to confirm. 📧', 'OK', { duration: 2500 });
+        this.router.navigateByUrl('/');
       },
       error: () => {
         this.loading = false;
