@@ -6,7 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { AuthService } from '../core/auth/auth.service';
+import { AuthService } from '../../../core/auth/auth.service';
 
 @Component({
   standalone: true,
