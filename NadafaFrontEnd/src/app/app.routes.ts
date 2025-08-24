@@ -1,13 +1,18 @@
 import { Routes } from '@angular/router';
-import { LoginComponent } from './features/auth/login/login.component';
-import { RegisterComponent } from './features/auth/register/register.component';
-import { ForgotPasswordComponent } from './features/auth/forgot-password/forgot-password.component';
-import { VerifyEmailComponent } from './features/auth/verify-email/verify-email.component';
+import { AuthLayoutComponent } from './auth/auth-layout.component';
 
-export const routes: Routes = [
-  { path: 'auth/login', component: LoginComponent },
-  { path: 'auth/register', component: RegisterComponent },
-  { path: 'auth/forgot-password', component: ForgotPasswordComponent },
-  { path: 'auth/verify-email', component: VerifyEmailComponent },
-  { path: '', redirectTo: 'auth/login', pathMatch: 'full' }
+export const appRoutes: Routes = [
+  { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
+  {
+    path: 'auth',
+    component: AuthLayoutComponent,
+    children: [
+      { path: '', redirectTo: 'login', pathMatch: 'full' },
+      { path: 'login', loadComponent: () => import('./auth/login.component').then(m => m.LoginComponent) },
+      { path: 'register', loadComponent: () => import('./auth/register.component').then(m => m.RegisterComponent) },
+      { path: 'forgot-password', loadComponent: () => import('./auth/forgot-password.component').then(m => m.ForgotPasswordComponent) },
+      { path: 'verify-email', loadComponent: () => import('./auth/verify-email.component').then(m => m.VerifyEmailComponent) },
+    ],
+  },
+  { path: '**', redirectTo: 'auth/login' },
 ];

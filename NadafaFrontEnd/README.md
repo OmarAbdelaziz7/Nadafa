@@ -1,10 +1,6 @@
 # NadafaFrontEnd
 
-<<<<<<< HEAD
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.1.5.
-=======
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.2.0.
->>>>>>> 232b30b9a631aada6b497df1034d5b30ba7ed3eb
 
 ## Development server
 

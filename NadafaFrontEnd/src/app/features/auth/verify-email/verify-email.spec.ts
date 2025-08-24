@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { VerifyEmail } from './verify-email';
+import { VerifyEmail } from './verify-email.component';
 
 describe('VerifyEmail', () => {
   let component: VerifyEmail;
