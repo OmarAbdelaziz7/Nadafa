@@ -1,6 +1,10 @@
 using Application;
 using Domain;
 using Infrastructure;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.SqlServer;
+using Microsoft.EntityFrameworkCore.Design;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +18,11 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddApplicationServices();
 builder.Services.AddDomainServices();
 builder.Services.AddInfrastructureServices();
+
+builder.Services.AddDbContext<Infrastructure.Data.ApplicationDBContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
 
 var app = builder.Build();
 
