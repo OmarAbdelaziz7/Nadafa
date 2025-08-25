@@ -7,9 +7,9 @@ using Domain.Results;
 
 namespace Application.DTOs.AuthDTOs
 {
-    public class AuthResponseDTO : Response<
+    public class AuthResponseDTO : Response<string>
     {
-        int userId;
+       
        
 
     }

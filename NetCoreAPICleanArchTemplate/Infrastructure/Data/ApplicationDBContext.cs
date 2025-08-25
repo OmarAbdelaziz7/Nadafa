@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Domain.Entities;
 
 
@@ -17,7 +17,6 @@ namespace Infrastructure.Data
 
         }
 
-        public DbSet<ApplicationUser> Users { get; set; }
 
         public DbSet<Factory> Factories { get; set; }
 
