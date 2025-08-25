@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore.Design;
 using Infrastructure.Services;
 using Application.Contracts;
 using Infrastructure.Data;
+using Domain.Entities;
+using Microsoft.AspNetCore.Identity;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,10 +23,16 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddApplicationServices();
 builder.Services.AddDomainServices();
 builder.Services.AddInfrastructureServices();
-builder.Services.AddScoped<IJwtTokenService, JWTTokenService>();
 
 builder.Services.AddDbContext<ApplicationDBContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Identity
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDBContext>()
+    .AddDefaultTokenProviders();
+
+
 
 var app = builder.Build();
 
@@ -36,6 +44,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllowAllOrigins");
 
 app.UseAuthorization();
 

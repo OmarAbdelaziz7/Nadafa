@@ -12,6 +12,6 @@ namespace Application.Contracts
     {
         public Task<ApplicationUser> GetByEmailAsync(string email);
 
-        public Task<bool> UpdatePassword(int userId, string newPassword);
+        //public Task<bool> UpdatePassword(int userId, string newPassword);
     }
 }

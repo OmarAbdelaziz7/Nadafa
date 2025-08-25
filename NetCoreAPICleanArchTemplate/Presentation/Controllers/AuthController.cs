@@ -6,37 +6,40 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Base;
 using Application.DTOs.AuthDTOs;
-
+using Application.Contracts;
 namespace Presentation.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : AppControllerBase
     {
-        [HttpPost("register/user")]
-        public IActionResult Register([FromBody] RegisterUserDTO registerDTO)
+        private readonly IAuthService _authService;
+
+        public AuthController(IAuthService authService)
         {
-            // call the service to register the user
-            // return the result
-            return Ok(registerDTO);
-            
+            _authService = authService;
         }
 
+        [HttpPost("register/user")]
+        public async Task<IActionResult> Register([FromBody] RegisterUserDTO registerDTO)
+        {
+            var result = await _authService.RegisterUserAsync(registerDTO);
+            return NewResult(result);
+        }
+/*
         [HttpPost("register/factory")]
 
-        public IActionResult RegisterFactory([FromBody] RegisterFactoryDTO registerDTO)
+        public async Task<IActionResult> RegisterFactory([FromBody] RegisterFactoryDTO registerDTO)
         {
-            // call the service to register the factory
-            // return the result
-            return Ok(registerDTO);
+            var result = await _authService.RegisterFactoryAsync(registerDTO, new AuthMapper());
+            return Ok(result);
         }
-
+*/
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginDTO loginDTO)
+        public async Task<IActionResult> Login([FromBody] LoginDTO loginDTO)
         {
-            // call the service to login the user or factory
-            // return the result
-            return Ok(loginDTO);
+            var result = await _authService.LoginAsync(loginDTO);
+            return NewResult(result);
         }
     }
 }

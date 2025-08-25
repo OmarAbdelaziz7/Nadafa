@@ -22,12 +22,9 @@ namespace Application.DTOs.AuthDTOs
         public required string Password { get; set; }
 
         [Required]
-        [Compare("password", ErrorMessage = "Passwords do not match.")]
+        [Compare("Password", ErrorMessage = "Passwords do not match.")]
         public required string ConfirmPassword { get; set; }
 
-        public string? PhoneNumber { get; set; }
-
-        public string? Address { get; set; }
-
+       
     }
 }

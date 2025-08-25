@@ -25,8 +25,6 @@ namespace Application.DTOs.AuthDTOs
         [Compare("Password", ErrorMessage = "Passwords do not match.")]
         public string ConfirmPassword { get; set; } = string.Empty;
 
-        public string? PhoneNumber { get; set; }
-        public string? Address { get; set; }
-        public string? Description { get; set; }
+        
     }
 }

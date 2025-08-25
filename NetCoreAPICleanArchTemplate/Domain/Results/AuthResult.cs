@@ -4,7 +4,8 @@ namespace Domain.Results
 {
     public class AuthResult
     {
-        public int UserId { get; set; }
+        
+        public required string UserId { get; set; }
         public bool IsAuthenticated { get; set; }
         public string? Username { get; set; }
         public string? Email { get; set; }
