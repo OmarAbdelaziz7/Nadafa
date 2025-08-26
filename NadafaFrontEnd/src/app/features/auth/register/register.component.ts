@@ -14,8 +14,7 @@ import { RouterLink } from '@angular/router';
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
-    MatButtonModule,
-    RouterLink
+    MatButtonModule
   ],
   templateUrl: './register.html',
   styleUrls: ['./register.css']

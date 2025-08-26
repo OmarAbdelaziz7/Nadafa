@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
-import { AuthLayoutComponent } from './features/auth/auth-layout.component';
 import { MainLayoutComponent } from './shared/layout/main-layout.component';
+import { AuthLayoutComponent } from './features/auth/auth-layout.component';
 import { AuthGuard } from './core/auth/auth.guard';
 
 export const appRoutes: Routes = [
@@ -11,6 +11,8 @@ export const appRoutes: Routes = [
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent) },
+      { path: 'marketplace', loadComponent: () => import('./features/marketplace/marketplace.component').then(m => m.MarketplaceComponent) },
+      { path: 'marketplace/:id', loadComponent: () => import('./features/marketplace/material-detail/material-detail.component').then(m => m.MaterialDetailComponent) },
       { path: 'profile', loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent) }, // Placeholder
       { path: 'settings', loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent) }, // Placeholder
       { path: 'security', loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent) }, // Placeholder

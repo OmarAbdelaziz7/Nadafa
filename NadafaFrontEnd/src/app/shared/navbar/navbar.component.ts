@@ -9,19 +9,19 @@ import { MatDividerModule } from '@angular/material/divider';
 import { AuthService } from '../../core/auth/auth.service';
 
 @Component({
-    selector: 'app-navbar',
-    standalone: true,
-    imports: [
-        CommonModule,
-        RouterLink,
-        RouterLinkActive,
-        MatToolbarModule,
-        MatButtonModule,
-        MatIconModule,
-        MatMenuModule,
-        MatDividerModule
-    ],
-    template: `
+  selector: 'app-navbar',
+  standalone: true,
+  imports: [
+    CommonModule,
+    RouterLink,
+    RouterLinkActive,
+    MatToolbarModule,
+    MatButtonModule,
+    MatIconModule,
+    MatMenuModule,
+    MatDividerModule
+  ],
+  template: `
     <mat-toolbar class="navbar">
       <div class="navbar-container">
         <!-- Logo/Brand -->
@@ -37,6 +37,10 @@ import { AuthService } from '../../core/auth/auth.service';
           <a class="nav-link" routerLink="/dashboard" routerLinkActive="active">
             <mat-icon>dashboard</mat-icon>
             Dashboard
+          </a>
+          <a class="nav-link" routerLink="/marketplace" routerLinkActive="active">
+            <mat-icon>store</mat-icon>
+            Marketplace
           </a>
           <a class="nav-link" routerLink="/profile" routerLinkActive="active">
             <mat-icon>person</mat-icon>
@@ -89,6 +93,10 @@ import { AuthService } from '../../core/auth/auth.service';
               <mat-icon>dashboard</mat-icon>
               <span>Dashboard</span>
             </button>
+            <button mat-menu-item routerLink="/marketplace">
+              <mat-icon>store</mat-icon>
+              <span>Marketplace</span>
+            </button>
             <button mat-menu-item routerLink="/profile">
               <mat-icon>person</mat-icon>
               <span>Profile</span>
@@ -117,7 +125,7 @@ import { AuthService } from '../../core/auth/auth.service';
       </div>
     </mat-toolbar>
   `,
-    styles: [`
+  styles: [`
     .navbar {
       position: fixed;
       top: 0;
@@ -280,21 +288,21 @@ import { AuthService } from '../../core/auth/auth.service';
   `]
 })
 export class NavbarComponent {
-    private authService = inject(AuthService);
-    private router = inject(Router);
+  private authService = inject(AuthService);
+  private router = inject(Router);
 
-    isLoggedIn = signal(this.authService.isLoggedIn());
+  isLoggedIn = signal(this.authService.isLoggedIn());
 
-    constructor() {
-        // Update login status when navigation changes
-        this.router.events.subscribe(() => {
-            this.isLoggedIn.set(this.authService.isLoggedIn());
-        });
-    }
+  constructor() {
+    // Update login status when navigation changes
+    this.router.events.subscribe(() => {
+      this.isLoggedIn.set(this.authService.isLoggedIn());
+    });
+  }
 
-    logout() {
-        this.authService.logout();
-        this.isLoggedIn.set(false);
-        this.router.navigate(['/auth/login']);
-    }
+  logout() {
+    this.authService.logout();
+    this.isLoggedIn.set(false);
+    this.router.navigate(['/auth/login']);
+  }
 }

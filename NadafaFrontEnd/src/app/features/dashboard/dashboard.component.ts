@@ -6,16 +6,16 @@ import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 
 @Component({
-    selector: 'app-dashboard',
-    standalone: true,
-    imports: [
-        CommonModule,
-        MatCardModule,
-        MatButtonModule,
-        MatIconModule,
-        RouterLink
-    ],
-    template: `
+  selector: 'app-dashboard',
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    RouterLink
+  ],
+  template: `
     <div class="dashboard">
       <div class="dashboard-container">
         <header class="dashboard-header">
@@ -24,6 +24,20 @@ import { RouterLink } from '@angular/router';
         </header>
 
         <div class="dashboard-grid">
+          <mat-card class="dashboard-card">
+            <mat-card-header>
+              <mat-icon mat-card-avatar>store</mat-icon>
+              <mat-card-title>Marketplace</mat-card-title>
+              <mat-card-subtitle>Browse recyclable materials</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <p>Find and purchase recyclable materials from verified sellers across different categories.</p>
+            </mat-card-content>
+            <mat-card-actions>
+              <button mat-button routerLink="/marketplace">BROWSE MARKETPLACE</button>
+            </mat-card-actions>
+          </mat-card>
+
           <mat-card class="dashboard-card">
             <mat-card-header>
               <mat-icon mat-card-avatar>person</mat-icon>
@@ -83,7 +97,7 @@ import { RouterLink } from '@angular/router';
       </div>
     </div>
   `,
-    styles: [`
+  styles: [`
     .dashboard {
       padding: 1rem 1rem 2rem 1rem;
       min-height: calc(100vh - 80px - 200px); /* Account for navbar and footer */
