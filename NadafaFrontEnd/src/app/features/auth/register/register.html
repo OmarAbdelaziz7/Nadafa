@@ -1,1 +1,62 @@
-<p>register works!</p>
+<div class="d-flex align-items-center justify-content-center min-vh-100 bg-light">
+  <div class="register-card text-center">
+    <h3 class="brand-title mb-2">Welcome to Nadafa</h3>
+    <p class="subtitle mb-4 text-secondary">Create your account</p>
+
+    <form method="get" action="auth/verify-email">
+      <div class="mb-3 text-start">
+        <label for="name" class="form-label">User Name</label>
+        <input 
+          type="text" 
+          id="name" 
+          class="form-control"
+          formControlName="name" 
+          placeholder="Enter your name">
+      </div>
+      <div class="mb-3 text-start">
+        <label for="email" class="form-label">Email Address</label>
+        <input 
+          type="email" 
+          id="email" 
+          class="form-control"
+          formControlName="email" 
+          placeholder="Enter your email">
+      </div>
+      <div class="mb-3 text-start">
+        <label for="password" class="form-label">Password</label>
+        <input 
+          type="password" 
+          id="password" 
+          class="form-control"
+          formControlName="password" 
+          placeholder="Enter your password">
+      </div>
+      <div class="mb-3 text-start">
+        <label for="confirm-password" class="form-label">Confirm Password</label>
+        <input 
+          type="password" 
+          id="confirm-password" 
+          class="form-control"
+          formControlName="confirm-password" 
+          placeholder="Confirm your password">
+      </div>
+      <div class="mb-3 text-start">
+        <label for="userType" class="form-label">Select Type</label>
+        <select id="userType" class="form-select" formControlName="userType">
+          <option value="" disabled selected>Select...</option>
+          <option value="factory">Factory</option>
+          <option value="house">House</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn btn-success btn-custom w-100">
+        Register
+      </button>
+
+
+      <p class="mt-3 mb-0">
+        <a href="auth/login" class="text-decoration-none text-success">Already have an account? Login</a>
+      </p>
+    </form>
+  </div>
+</div>
