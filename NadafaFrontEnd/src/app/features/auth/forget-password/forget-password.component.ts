@@ -1,16 +1,27 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-forget-password',
-  imports: [],
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    RouterLink
+  ],
   templateUrl: './forget-password.html',
-  styleUrls: ['./forget-password.css',
-    '../../../../../node_modules/bootstrap/dist/css/bootstrap.min.css'
-  ]
+  styleUrls: ['./forget-password.css']
 })
-export class ForgetPassword {
-forgotForm: FormGroup;
+export class ForgetPasswordComponent {
+  forgotForm: FormGroup;
 
   constructor(private fb: FormBuilder) {
     this.forgotForm = this.fb.group({
