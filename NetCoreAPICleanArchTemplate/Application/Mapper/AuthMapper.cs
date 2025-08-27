@@ -23,8 +23,28 @@ namespace Application.Mapper
         {
             return new ApplicationUser
             {
+
                 Email = loginDTO.Email
             };
         }
+
+        public static Factory ToFactoryFromRequestDTO(RegisterFactoryDTO registerFactoryDTO)
+        {
+            return new Factory
+            {
+                FactoryName = registerFactoryDTO.FactoryName,
+                Email = registerFactoryDTO.Email
+            };
+        }
+
+        public static Factory ToFactoryFromLoginDTO(LoginDTO loginDTO)
+        {
+            return new Factory
+            {
+                Email = loginDTO.Email
+            };
+        }
+
+        
     }
 }

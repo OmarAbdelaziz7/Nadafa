@@ -26,19 +26,26 @@ namespace Presentation.Controllers
             var result = await _authService.RegisterUserAsync(registerDTO);
             return NewResult(result);
         }
-/*
+
         [HttpPost("register/factory")]
 
         public async Task<IActionResult> RegisterFactory([FromBody] RegisterFactoryDTO registerDTO)
         {
-            var result = await _authService.RegisterFactoryAsync(registerDTO, new AuthMapper());
-            return Ok(result);
+            var result = await _authService.RegisterFactoryAsync(registerDTO);
+            return NewResult(result);
         }
-*/
-        [HttpPost("login")]
+
+        [HttpPost("login/user")]
         public async Task<IActionResult> Login([FromBody] LoginDTO loginDTO)
         {
-            var result = await _authService.LoginAsync(loginDTO);
+            var result = await _authService.LoginUserAsync(loginDTO);
+            return NewResult(result);
+        }
+
+        [HttpPost("login/factory")]
+        public async Task<IActionResult> LoginFactory([FromBody] LoginDTO loginDTO)
+        {
+            var result = await _authService.LoginFactoryAsync(loginDTO);
             return NewResult(result);
         }
     }

@@ -10,10 +10,10 @@ namespace Domain.Entities
     {
         public int Id { get; set; }
 
-        public required string FactoryName { get; set; }
-        public required string Email { get; set; }
-        public required string HashedPassword { get; set; }
-        public DateTime createdAt { get; set; } = DateTime.UtcNow;
+        public string FactoryName { get; set; }
+        public string Email { get; set; }
+        public string HashedPassword { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public DateTime UpdatedAt { get; set; }
     }

@@ -13,6 +13,7 @@ namespace Application.Contracts
     public interface IJwtTokenService
     {
          public Task<string> GenerateToken(ApplicationUser user);
+         public Task<string> GenerateFactoryToken(Factory factory);
          public Task<ClaimsPrincipal> ValidateToken(string token);
     }
 }

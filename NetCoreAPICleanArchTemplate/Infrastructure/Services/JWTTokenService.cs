@@ -98,5 +98,30 @@ namespace Infrastructure.Services
 				return null;
 			}
 		}
+
+		public Task<string> GenerateFactoryToken(Factory factory)
+		{
+			var tokenHandler = new JwtSecurityTokenHandler();
+			var key = Encoding.ASCII.GetBytes(_key);
+
+			var claims = new List<Claim>
+		{
+			new Claim(ClaimTypes.NameIdentifier, factory.Id.ToString()),
+			new Claim(ClaimTypes.Email, factory.Email),
+			new Claim("FactoryName", factory.FactoryName)
+		};
+
+			var tokenDescriptor = new SecurityTokenDescriptor
+			{
+				Subject = new ClaimsIdentity(claims),
+				Expires = DateTime.UtcNow.AddHours(_expirationHours),
+				Issuer = _issuer,
+				Audience = _audience,
+				SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+			};
+
+			var token = tokenHandler.CreateToken(tokenDescriptor);
+			return Task.FromResult(tokenHandler.WriteToken(token));
+		}
 	}
 }
