@@ -1,27 +1,27 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 
 @Component({
-  selector: 'app-login',
-  imports: [],
-  templateUrl: './login.html',
-  styleUrls: ['./login.css',
-    '../../../../../node_modules/bootstrap/dist/css/bootstrap.min.css'
+  selector: 'app-register',
+  imports: [RouterLink],
+  templateUrl: './register.html',
+  styleUrls: ['./register.css',
   ]
 })
-export class Login {
-   loginForm: FormGroup;
+export class Register {
+   rgisterForm: FormGroup;
 
   constructor(private fb: FormBuilder) {
-    this.loginForm = this.fb.group({
+    this.rgisterForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
 
   onSubmit() {
-    if (this.loginForm.valid) {
-      console.log(this.loginForm.value);
+    if (this.rgisterForm.valid) {
+      console.log(this.rgisterForm.value);
     }
   }
 

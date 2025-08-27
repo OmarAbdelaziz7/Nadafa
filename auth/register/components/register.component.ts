@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-register',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './register.html',
   styleUrls: ['./register.css',
     '../../../../../node_modules/bootstrap/dist/css/bootstrap.min.css'

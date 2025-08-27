@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-forget-password',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './forget-password.html',
   styleUrls: ['./forget-password.css',
-    '../../../../../node_modules/bootstrap/dist/css/bootstrap.min.css'
   ]
 })
 export class ForgetPassword {
