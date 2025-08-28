@@ -19,18 +19,18 @@ export const appRoutes: Routes = [
     { path: 'forgot-password', loadComponent: () => import('./features/auth/forget-password/components/forget-password.component').then(m => m.ForgetPassword) },
     { path: 'verify-email', loadComponent: () => import('./features/auth/verify-email/components/verify-email.component').then(m => m.VerifyEmail) },
     { path: '', loadComponent: () => import('./app.component').then(m => m.AppComponent) },
-      {
-    path: 'factory',
-    // loadComponent: () => import('./features/factory/factory.component').then(m => m.FactoryComponent),
-    canActivate: [RoleGuard],
-    data: { role: 'Factory' }
-  },
-  {
-    path: 'house',
-    // loadComponent: () => import('./features/house/house.component').then(m => m.HouseComponent),
-    canActivate: [RoleGuard],
-    data: { role: 'House' }
-  }
+  //     {
+  //   path: 'factory',
+  //   // loadComponent: () => import('./features/factory/factory.component').then(m => m.FactoryComponent),
+  //   canActivate: [RoleGuard],
+  //   data: { role: 'Factory' }
+  // },
+  // {
+  //   path: 'house',
+  //   // loadComponent: () => import('./features/house/house.component').then(m => m.HouseComponent),
+  //   canActivate: [RoleGuard],
+  //   data: { role: 'House' }
+  // }
   ]
 },
 { path: '**', redirectTo: 'auth/login' }

@@ -3,7 +3,7 @@
     <h3 class="brand-title mb-2">Welcome to Nadafa</h3>
     <p class="subtitle mb-4 text-secondary">Create your account</p>
 
-    <form method="get" action="auth/verify-email">
+    <form (ngSubmit)="onSubmit()" [formGroup]="registerForm">
       <div class="mb-3 text-start">
         <label for="name" class="form-label">User Name</label>
         <input 
@@ -37,13 +37,13 @@
           type="password" 
           id="confirm-password" 
           class="form-control"
-          formControlName="confirm-password" 
+          formControlName="confirmPassword" 
           placeholder="Confirm your password">
       </div>
       <div class="mb-3 text-start">
         <label for="userType" class="form-label">Select Type</label>
         <select id="userType" class="form-select" formControlName="userType">
-          <option value="" disabled selected>Select...</option>
+          <option value="Select..." disabled selected>Select...</option>
           <option value="factory">Factory</option>
           <option value="house">House</option>
         </select>
