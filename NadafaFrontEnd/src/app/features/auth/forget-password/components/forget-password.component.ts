@@ -5,7 +5,7 @@ import { RouterLink } from '@angular/router';
 @Component({
   selector: 'app-forget-password',
   imports: [RouterLink],
-  templateUrl: './forget-password.html',
+  templateUrl: './forget-password.component.html',
   styleUrls: ['./forget-password.css',
   ]
 })

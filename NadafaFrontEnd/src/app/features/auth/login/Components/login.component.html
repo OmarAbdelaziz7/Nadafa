@@ -2,7 +2,7 @@
   <div class="login-card text-center">
     <h3 class="brand-title mb-4">Welcome to Nadafa</h3>
     <h6 class="mb-3 text-secondary">Login to your account</h6>
-    <form>
+    <form (ngSubmit)="onSubmit()" [formGroup]="loginForm">
       <div class="mb-3 text-start">
         <label for="email" class="form-label">Email Address</label>
         <input type="email" id="email" class="form-control" formControlName="email" placeholder="Enter your email">
@@ -15,7 +15,7 @@
       <div class="mb-3 text-start">
         <label for="userType" class="form-label">Select Type</label>
         <select id="userType" class="form-select" formControlName="userType">
-          <option value="" disabled selected>Select...</option>
+          <option value="Select..." disabled selected>Select...</option>
           <option value="factory">Factory</option>
           <option value="house">House</option>
         </select>

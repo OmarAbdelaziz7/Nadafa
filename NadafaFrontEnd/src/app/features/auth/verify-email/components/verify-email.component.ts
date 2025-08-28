@@ -4,7 +4,7 @@ import { RouterLink } from '@angular/router';
 @Component({
   selector: 'app-verify-email',
   imports: [RouterLink],
-  templateUrl: './verify-email.html',
+  templateUrl: './verify-email.component.html',
   styleUrl: './verify-email.css'
 })
 export class VerifyEmail {
