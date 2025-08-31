@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { AuthService } from '../Services/auth.service';
-import { LoginDto } from '../login/DTO/login.dto';
-import { RegisterDto } from '../register/DTO/register.dto';
-import { ForgotPasswordDto } from '../forget-password/DTO/forget-password.dto';
+import { LoginRequest } from '../login/DTO/login.dto';
+import { RegisterRequest } from '../register/DTO/register.dto';
+import { ForgotPasswordRequest } from '../forget-password/DTO/forget-password.dto';
 import { VerifyEmailDto } from '../verify-email/DTO/verify-email.dto';
 import { Observable, tap } from 'rxjs';
 
@@ -12,7 +12,7 @@ export class AuthRepository {
 
   constructor(private authService: AuthService) {}
 
-  login(payload: LoginDto): Observable<any> {
+  login(payload: LoginRequest): Observable<any> {
     return this.authService.login(payload).pipe(
       tap((res: any) => {
         localStorage.setItem(this.tokenKey, res.token);
@@ -20,11 +20,11 @@ export class AuthRepository {
     );
   }
 
-  register(payload: RegisterDto): Observable<any> {
+  register(payload: RegisterRequest): Observable<any> {
     return this.authService.register(payload);
   }
 
-  forgotPassword(payload: ForgotPasswordDto): Observable<any> {
+  forgotPassword(payload: ForgotPasswordRequest): Observable<any> {
     return this.authService.forgotPassword(payload);
   }
 

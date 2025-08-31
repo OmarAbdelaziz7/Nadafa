@@ -1,3 +1,3 @@
-export interface ForgotPasswordDto {
+export interface ForgotPasswordRequest {
   email: string;
 }
