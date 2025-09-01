@@ -1,0 +1,65 @@
+### Test NADAFA Recycling Platform API
+
+### 1. User Registration
+POST {{baseUrl}}/api/auth/register/user
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "address": "123 Main St, City, State",
+  "age": 25,
+  "password": "SecurePass123!"
+}
+
+### 2. Factory Registration
+POST {{baseUrl}}/api/auth/register/factory
+Content-Type: application/json
+
+{
+  "name": "Green Recycling Co",
+  "email": "info@greenrecycling.com",
+  "address": "456 Industrial Blvd, City, State",
+  "password": "SecurePass123!",
+  "phoneNumber": "+1-555-0123",
+  "businessLicense": "GRC123456"
+}
+
+### 3. User Login
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "john@example.com",
+  "password": "SecurePass123!"
+}
+
+### 4. Factory Login
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "info@greenrecycling.com",
+  "password": "SecurePass123!"
+}
+
+### 5. Admin Login (Pre-seeded user)
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@nadafa.com",
+  "password": "Admin123!"
+}
+
+### 6. Validate Token (Replace with actual token)
+POST {{baseUrl}}/api/auth/validate-token
+Authorization: Bearer {{authToken}}
+
+### 7. Get Current User (Replace with actual token)
+GET {{baseUrl}}/api/auth/me
+Authorization: Bearer {{authToken}}
+
+### Variables (set these in your HTTP client)
+# @baseUrl = https://localhost:5001
+# @authToken = your-jwt-token-here

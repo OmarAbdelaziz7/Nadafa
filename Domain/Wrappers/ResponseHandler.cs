@@ -1,4 +1,6 @@
-﻿using Domain.Results;
+﻿using System.Collections.Generic;
+using System.Net;
+using Domain.Results;
 
 namespace Domain.Wrappers
 {
@@ -8,7 +10,7 @@ namespace Domain.Wrappers
         {
             return new Response<T>()
             {
-                StatusCode = System.Net.HttpStatusCode.OK,
+                StatusCode = HttpStatusCode.OK,
                 Succeeded = true,
                 Message = "Deleted Successfully"
             };
@@ -17,7 +19,7 @@ namespace Domain.Wrappers
         {
             return new Response<T>()
             {
-                StatusCode = System.Net.HttpStatusCode.OK,
+                StatusCode = HttpStatusCode.OK,
                 Succeeded = true,
                 Message = "Email Verified Successfully"
             };
@@ -26,7 +28,7 @@ namespace Domain.Wrappers
         {
             return new Response<T>()
             {
-                StatusCode = System.Net.HttpStatusCode.OK,
+                StatusCode = HttpStatusCode.OK,
                 Succeeded = true,
                 Message = "Email Sent Successfully"
             };
@@ -35,7 +37,7 @@ namespace Domain.Wrappers
         {
             return new Response<T>()
             {
-                StatusCode = System.Net.HttpStatusCode.OK,
+                StatusCode = HttpStatusCode.OK,
                 Succeeded = true,
                 Message = "Password Updated Successfully"
             };
@@ -45,7 +47,7 @@ namespace Domain.Wrappers
             return new Response<T>()
             {
                 Data = entity,
-                StatusCode = System.Net.HttpStatusCode.OK,
+                StatusCode = HttpStatusCode.OK,
                 Succeeded = true
             };
         }
@@ -54,7 +56,7 @@ namespace Domain.Wrappers
             return new Response<T>()
             {
                 Data = entity,
-                StatusCode = System.Net.HttpStatusCode.OK,
+                StatusCode = HttpStatusCode.OK,
                 Succeeded = true,
                 Message = "Uploaded Successfully"
             };
@@ -65,7 +67,7 @@ namespace Domain.Wrappers
             {
                 Data = entity,
                 Message = Message == null! ? "Updated Successfully" : Message,
-                StatusCode = System.Net.HttpStatusCode.OK,
+                StatusCode = HttpStatusCode.OK,
                 Succeeded = true
             };
         }
@@ -73,7 +75,7 @@ namespace Domain.Wrappers
         {
             return new Response<T>()
             {
-                StatusCode = System.Net.HttpStatusCode.Unauthorized,
+                StatusCode = HttpStatusCode.Unauthorized,
                 Succeeded = true,
                 Message = "UnAuthorized",
             };
@@ -82,7 +84,7 @@ namespace Domain.Wrappers
         {
             return new Response<T>()
             {
-                StatusCode = System.Net.HttpStatusCode.BadRequest,
+                StatusCode = HttpStatusCode.BadRequest,
                 Succeeded = false,
                 Message = Message == null! ? "Bad Request" : Message
             };
@@ -91,7 +93,7 @@ namespace Domain.Wrappers
         {
             return new Response<T>()
             {
-                StatusCode = System.Net.HttpStatusCode.BadRequest,
+                StatusCode = HttpStatusCode.BadRequest,
                 Succeeded = false,
                 Errors = Errors
             };
@@ -100,7 +102,7 @@ namespace Domain.Wrappers
         {
             return new Response<T>()
             {
-                StatusCode = System.Net.HttpStatusCode.NotFound,
+                StatusCode = HttpStatusCode.NotFound,
                 Succeeded = false,
                 Message = Message == null! ? "Not Found" : Message
             };
@@ -110,7 +112,7 @@ namespace Domain.Wrappers
             return new Response<T>()
             {
                 Data = entity,
-                StatusCode = System.Net.HttpStatusCode.Created,
+                StatusCode = HttpStatusCode.Created,
                 Succeeded = true
             };
         }

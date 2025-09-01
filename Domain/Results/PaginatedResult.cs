@@ -1,4 +1,7 @@
-﻿namespace Domain.Results
+﻿using System;
+using System.Collections.Generic;
+
+namespace Domain.Results
 {
     public class PaginatedResult<T>
     {
