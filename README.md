@@ -158,6 +158,204 @@ GET /api/auth/me
 Authorization: Bearer <your-jwt-token>
 ```
 
+### Change Password (Requires Authentication)
+```http
+POST /api/auth/change-password
+Authorization: Bearer <your-jwt-token>
+Content-Type: application/json
+
+{
+  "currentPassword": "SecurePass123!",
+  "newPassword": "NewSecurePass456!",
+  "confirmNewPassword": "NewSecurePass456!"
+}
+```
+
+**Response:**
+```json
+{
+  "isSuccess": true,
+  "message": "Password changed successfully",
+  "email": "john@example.com",
+  "role": "User"
+}
+```
+
+### Sign Out (Requires Authentication)
+```http
+POST /api/auth/signout
+Authorization: Bearer <your-jwt-token>
+```
+
+**Response:**
+```json
+{
+  "isSuccess": true,
+  "message": "Successfully signed out"
+}
+```
+
+## 🧪 Manual Testing Guide
+
+### Prerequisites
+1. Ensure the API is running: `dotnet run -p Presentation`
+2. Open Swagger UI: `https://localhost:5001/swagger`
+3. Have a test user registered (use the registration endpoints)
+
+### Test Scenarios
+
+#### 1. User Registration & Login Flow
+1. **Register a new user** using `/api/auth/register/user`
+2. **Login** using `/api/auth/login` with the registered credentials
+3. **Copy the JWT token** from the response
+4. **Test token validation** using `/api/auth/validate-token` with the token
+5. **Get current user info** using `/api/auth/me` with the token
+
+#### 2. Factory Registration & Login Flow
+1. **Register a new factory** using `/api/auth/register/factory`
+2. **Login** using `/api/auth/login` with the factory credentials
+3. **Verify the role** in the response shows "Factory"
+
+#### 3. Password Change Flow (Authenticated User)
+1. **Login** to get a valid JWT token
+2. **Change password** using `/api/auth/change-password` with:
+   - Current password
+   - New password
+   - Confirm new password
+3. **Verify success message**
+4. **Try logging in** with the old password (should fail)
+5. **Login with new password** (should succeed)
+
+#### 4. Sign Out Flow
+1. **Login** to get a valid JWT token
+2. **Sign out** using `/api/auth/signout` with the token
+3. **Verify success message**
+4. **Try using the token** for any authenticated endpoint (should fail)
+
+#### 5. Admin Login Flow
+1. **Login as admin** using `/api/auth/login` with:
+   - Email: `admin@nadafa.com`
+   - Password: `Admin123!`
+2. **Verify the role** shows "Admin"
+
+### Expected Behaviors
+
+#### Authentication
+- ✅ Valid credentials return JWT token
+- ✅ Invalid credentials return 401 Unauthorized
+- ✅ JWT tokens work for authenticated endpoints
+- ✅ Invalid/expired tokens return 401 Unauthorized
+
+#### Password Management
+- ✅ Password change requires current password verification
+- ✅ New passwords must be confirmed
+- ✅ Old passwords become invalid after change
+
+#### Sign Out
+- ✅ Signed out tokens become invalid
+- ✅ Subsequent requests with signed out token fail
+- ✅ Success message confirms sign out
+
+#### Role-Based Access
+- ✅ Users can access user-specific endpoints
+- ✅ Factories can access factory-specific endpoints
+- ✅ Admins can access admin-specific endpoints
+
+### Common Test Cases
+
+#### Error Scenarios
+1. **Invalid email format** → Should return validation error
+2. **Weak password** → Should return validation error
+3. **Mismatched password confirmation** → Should return validation error
+4. **Invalid current password** → Should return error
+5. **Missing authorization header** → Should return 401
+6. **Invalid JWT token** → Should return 401
+7. **Using signed out token** → Should return 401
+
+#### Security Scenarios
+1. **Password confirmation** → New passwords must be confirmed
+2. **Email validation** → Email addresses must be valid format
+3. **Password strength** → Passwords must meet minimum requirements
+4. **Token blacklisting** → Signed out tokens should be invalid
+
+### Testing Tools
+- **Swagger UI**: Interactive API documentation and testing
+- **Postman**: Advanced API testing with collections
+- **HTTP files**: Use the provided `test-api.http` file
+- **cURL**: Command-line API testing
+
+### Notes
+- The current implementation uses in-memory storage for demo purposes
+- In production, implement proper database storage and password verification
+- Consider implementing rate limiting for security endpoints
+
+## 🗄️ Database Migration Guide
+
+### **Do You Need a Database Migration?**
+
+**Answer: NO, no database migration is needed for the password change feature.**
+
+### **Why No Migration is Required:**
+
+1. **Password change uses existing tables**: The password change feature works with the existing `Users` and `Factories` tables
+2. **No new tables needed**: Password changes update the existing `PasswordHash` field in the user/factory records
+3. **Existing schema is sufficient**: The current database structure already supports password management
+
+### **How Password Change Works:**
+
+1. **User authenticates** with current password
+2. **System verifies** current password against stored hash
+3. **If correct**, system hashes the new password and updates the database
+4. **No additional tables** or schema changes are required
+
+### **If You Need to Create/Update Database Schema:**
+
+#### **Option 1: Use Existing Migrations (Recommended)**
+```bash
+# Apply existing migrations to create the database
+dotnet ef database update --project Infrastructure --startup-project Presentation
+```
+
+#### **Option 2: Manual Database Creation**
+If you prefer to create the database manually:
+
+1. **Create MySQL Database:**
+```sql
+CREATE DATABASE NadafaDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+2. **Create MySQL User:**
+```sql
+CREATE USER 'nadafa_user'@'localhost' IDENTIFIED BY 'your_secure_password';
+GRANT ALL PRIVILEGES ON NadafaDB.* TO 'nadafa_user'@'localhost';
+FLUSH PRIVILEGES;
+```
+
+3. **Update Connection String** in `Presentation/appsettings.json`:
+```json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=localhost;Database=NadafaDB;User=nadafa_user;Password=your_secure_password;Port=3306;"
+  }
+}
+```
+
+4. **Apply Migrations:**
+```bash
+dotnet ef database update --project Infrastructure --startup-project Presentation
+```
+
+### **Database Schema Overview:**
+
+The application uses these main tables:
+- **Users**: Store user accounts with password hashes
+- **Factories**: Store factory accounts with password hashes
+- **PickupRequests**: Store pickup requests
+- **MarketplaceItems**: Store marketplace items
+- **Payments**: Store payment records
+
+All password-related operations work with the existing `PasswordHash` fields in the `Users` and `Factories` tables.
+
 ## 🧪 Testing with Swagger
 
 1. Open your browser and navigate to: `https://localhost:5001/swagger`

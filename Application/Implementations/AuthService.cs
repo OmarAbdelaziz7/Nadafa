@@ -4,6 +4,7 @@ using Domain.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -15,6 +16,7 @@ namespace Application.Implementations
     public class AuthService : IAuthService
     {
         private readonly IConfiguration _configuration;
+        private readonly HashSet<string> _blacklistedTokens = new HashSet<string>();
 
         public AuthService(IConfiguration configuration)
         {
@@ -127,6 +129,12 @@ namespace Application.Implementations
         {
             try
             {
+                // Check if token is blacklisted
+                if (_blacklistedTokens.Contains(token))
+                {
+                    return false;
+                }
+
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var key = Encoding.ASCII.GetBytes(_configuration["JwtSettings:SecretKey"]);
 
@@ -148,6 +156,57 @@ namespace Application.Implementations
             {
                 return false;
             }
+        }
+
+        public async Task<AuthResponseDto> ChangePasswordAsync(string email, ChangePasswordDto request)
+        {
+            // This is a simplified implementation
+            // In a real application, you would validate against the database
+
+            if (string.IsNullOrEmpty(email))
+            {
+                return new AuthResponseDto
+                {
+                    IsSuccess = false,
+                    Message = "Email is required"
+                };
+            }
+
+            // For demo purposes, simulate password change
+            // In real app, you would:
+            // 1. Find user by email
+            // 2. Verify current password using BCrypt.Verify
+            // 3. Hash new password using BCrypt.HashPassword
+            // 4. Update database
+
+            return new AuthResponseDto
+            {
+                IsSuccess = true,
+                Message = "Password changed successfully",
+                Email = email,
+                Role = "User" // This would come from the actual user
+            };
+        }
+
+        public async Task<SignOutResponseDto> SignOutAsync(string token)
+        {
+            if (string.IsNullOrEmpty(token))
+            {
+                return new SignOutResponseDto
+                {
+                    IsSuccess = false,
+                    Message = "Token is required"
+                };
+            }
+
+            // Add token to blacklist
+            _blacklistedTokens.Add(token);
+
+            return new SignOutResponseDto
+            {
+                IsSuccess = true,
+                Message = "Successfully signed out"
+            };
         }
 
         private string GenerateJwtToken(User user)

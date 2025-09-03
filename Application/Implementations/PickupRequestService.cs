@@ -11,14 +11,10 @@ namespace Application.Implementations
     public class PickupRequestService : IPickupRequestService
     {
         private readonly IPickupRequestRepository _pickupRequestRepository;
-        private readonly INotificationService _notificationService;
 
-        public PickupRequestService(
-            IPickupRequestRepository pickupRequestRepository,
-            INotificationService notificationService)
+        public PickupRequestService(IPickupRequestRepository pickupRequestRepository)
         {
             _pickupRequestRepository = pickupRequestRepository;
-            _notificationService = notificationService;
         }
 
         public async Task<PickupRequestResponseDto> CreateRequestAsync(CreatePickupRequestDto dto, int userId)
@@ -91,13 +87,6 @@ namespace Application.Implementations
 
             var updatedRequest = await _pickupRequestRepository.UpdateAsync(request);
 
-            // Create notification for user
-            await _notificationService.CreateNotificationAsync(
-                request.UserId,
-                "Pickup Request Approved",
-                $"Your pickup request for {request.MaterialType} has been approved. Admin notes: {dto.Notes}",
-                NotificationType.PickupApproved);
-
             return MapToResponseDto(updatedRequest);
         }
 
@@ -115,13 +104,6 @@ namespace Application.Implementations
             request.AdminNotes = dto.Notes;
 
             var updatedRequest = await _pickupRequestRepository.UpdateAsync(request);
-
-            // Create notification for user
-            await _notificationService.CreateNotificationAsync(
-                request.UserId,
-                "Pickup Request Rejected",
-                $"Your pickup request for {request.MaterialType} has been rejected. Admin notes: {dto.Notes}",
-                NotificationType.PickupApproved);
 
             return MapToResponseDto(updatedRequest);
         }

@@ -60,6 +60,21 @@ Authorization: Bearer {{authToken}}
 GET {{baseUrl}}/api/auth/me
 Authorization: Bearer {{authToken}}
 
+### 8. Change Password (Requires authentication)
+POST {{baseUrl}}/api/auth/change-password
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "currentPassword": "SecurePass123!",
+  "newPassword": "NewSecurePass456!",
+  "confirmNewPassword": "NewSecurePass456!"
+}
+
+### 9. Sign Out (Requires authentication)
+POST {{baseUrl}}/api/auth/signout
+Authorization: Bearer {{authToken}}
+
 ### Variables (set these in your HTTP client)
 # @baseUrl = https://localhost:5001
 # @authToken = your-jwt-token-here

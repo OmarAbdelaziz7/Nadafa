@@ -18,8 +18,6 @@ namespace Infrastructure.Data
         public DbSet<Payment> Payments { get; set; }
         public DbSet<PickupRequest> PickupRequests { get; set; }
         public DbSet<MarketplaceItem> MarketplaceItems { get; set; }
-        public DbSet<Purchase> Purchases { get; set; }
-        public DbSet<Notification> Notifications { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -155,43 +153,18 @@ namespace Infrastructure.Data
                     .OnDelete(DeleteBehavior.Restrict);
             });
 
-            // Configure Purchase entity
-            modelBuilder.Entity<Purchase>(entity =>
+            // Seed initial admin user
+            modelBuilder.Entity<User>().HasData(new User
             {
-                entity.HasKey(e => e.Id);
-                entity.Property(e => e.Quantity).IsRequired().HasColumnType("decimal(18,2)");
-                entity.Property(e => e.PricePerUnit).IsRequired().HasColumnType("decimal(18,2)");
-                entity.Property(e => e.StripePaymentIntentId).IsRequired().HasMaxLength(100);
-                entity.Property(e => e.PaymentStatus).IsRequired();
-                entity.Property(e => e.PurchaseDate).IsRequired();
-                entity.Property(e => e.CreatedAt).IsRequired();
-                entity.Property(e => e.UpdatedAt).IsRequired();
-
-                entity.HasOne(e => e.MarketplaceItem)
-                    .WithOne(mi => mi.Purchase)
-                    .HasForeignKey<Purchase>(e => e.MarketplaceItemId)
-                    .OnDelete(DeleteBehavior.Restrict);
-
-                entity.HasOne(e => e.Factory)
-                    .WithMany(f => f.Purchases)
-                    .HasForeignKey(e => e.FactoryId)
-                    .OnDelete(DeleteBehavior.Restrict);
-            });
-
-            // Configure Notification entity
-            modelBuilder.Entity<Notification>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-                entity.Property(e => e.Title).IsRequired().HasMaxLength(100);
-                entity.Property(e => e.Message).IsRequired().HasMaxLength(500);
-                entity.Property(e => e.IsRead).IsRequired();
-                entity.Property(e => e.NotificationType).IsRequired();
-                entity.Property(e => e.CreatedAt).IsRequired();
-
-                entity.HasOne(e => e.User)
-                    .WithMany(u => u.Notifications)
-                    .HasForeignKey(e => e.UserId)
-                    .OnDelete(DeleteBehavior.Cascade);
+                Id = 1,
+                Name = "Admin User",
+                Email = "admin@nadafa.com",
+                Address = "Admin Address",
+                Age = 30,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123!"),
+                Role = Role.Admin,
+                CreatedAt = DateTime.UtcNow,
+                IsActive = true
             });
         }
     }

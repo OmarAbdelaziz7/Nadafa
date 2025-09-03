@@ -61,16 +61,6 @@ namespace Application.DTOs
         public string Password { get; set; }
     }
 
-    public class AuthResponseDto
-    {
-        public bool IsSuccess { get; set; }
-        public string Message { get; set; }
-        public string Token { get; set; }
-        public DateTime ExpiresAt { get; set; }
-        public string Email { get; set; }
-        public string Role { get; set; }
-    }
-
     public class ChangePasswordDto
     {
         [Required]
@@ -85,33 +75,19 @@ namespace Application.DTOs
         public string ConfirmNewPassword { get; set; }
     }
 
-    public class ForgotPasswordDto
+    public class AuthResponseDto
     {
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; }
-    }
-
-    public class ResetPasswordDto
-    {
-        [Required]
+        public bool IsSuccess { get; set; }
+        public string Message { get; set; }
         public string Token { get; set; }
-
-        [Required]
-        [EmailAddress]
+        public DateTime ExpiresAt { get; set; }
         public string Email { get; set; }
-
-        [Required]
-        [StringLength(100, MinimumLength = 6)]
-        public string NewPassword { get; set; }
-
-        [Required]
-        [Compare("NewPassword", ErrorMessage = "Passwords do not match")]
-        public string ConfirmNewPassword { get; set; }
+        public string Role { get; set; }
     }
 
-    public class SignOutDto
+    public class SignOutResponseDto
     {
-        public string Message { get; set; } = "Successfully signed out";
+        public bool IsSuccess { get; set; }
+        public string Message { get; set; }
     }
 }

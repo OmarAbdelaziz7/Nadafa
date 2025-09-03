@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using Application.DTOs;
-using Domain.Results;
 
 namespace Application.Contracts
 {
@@ -10,5 +9,7 @@ namespace Application.Contracts
         Task<AuthResponseDto> RegisterFactoryAsync(FactoryRegistrationDto request);
         Task<AuthResponseDto> LoginAsync(LoginDto request);
         Task<bool> ValidateTokenAsync(string token);
+        Task<AuthResponseDto> ChangePasswordAsync(string email, ChangePasswordDto request);
+        Task<SignOutResponseDto> SignOutAsync(string token);
     }
 }
