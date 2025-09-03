@@ -1,46 +1,37 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Entities
 {
-    public class MarketplaceItem
+    public class Purchase
     {
         public Guid Id { get; set; }
 
         [Required]
-        public Guid PickupRequestId { get; set; }
+        public Guid MarketplaceItemId { get; set; }
 
         [Required]
-        public int UserId { get; set; }
-
-        [Required]
-        public MaterialType MaterialType { get; set; }
+        public int FactoryId { get; set; }
 
         [Required]
         [Range(0.01, double.MaxValue)]
         public decimal Quantity { get; set; }
 
         [Required]
-        public Unit Unit { get; set; }
-
-        [Required]
         [Range(0.01, double.MaxValue)]
         public decimal PricePerUnit { get; set; }
 
-        public decimal TotalPrice => Quantity * PricePerUnit;
+        public decimal TotalAmount => Quantity * PricePerUnit;
 
         [Required]
-        [StringLength(500)]
-        public string Description { get; set; }
-
-        public List<string> ImageUrls { get; set; } = new List<string>();
+        [StringLength(100)]
+        public string StripePaymentIntentId { get; set; }
 
         [Required]
-        public bool IsAvailable { get; set; } = true;
+        public PaymentStatus PaymentStatus { get; set; } = PaymentStatus.Pending;
 
         [Required]
-        public DateTime PublishedAt { get; set; } = DateTime.UtcNow;
+        public DateTime PurchaseDate { get; set; } = DateTime.UtcNow;
 
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
@@ -48,9 +39,8 @@ namespace Domain.Entities
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
         // Navigation properties
-        public virtual PickupRequest PickupRequest { get; set; }
-        public virtual User User { get; set; }
-        public virtual Purchase Purchase { get; set; }
+        public virtual MarketplaceItem MarketplaceItem { get; set; }
+        public virtual Factory Factory { get; set; }
 
         // Helper method to update timestamp
         public void UpdateTimestamp()

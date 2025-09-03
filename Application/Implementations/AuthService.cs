@@ -25,7 +25,7 @@ namespace Application.Implementations
         {
             // This is a simplified implementation
             // In a real application, you would inject a repository or unit of work
-            
+
             // Generate JWT token for demo purposes
             var user = new User
             {
@@ -57,7 +57,7 @@ namespace Application.Implementations
         {
             // This is a simplified implementation
             // In a real application, you would inject a repository or unit of work
-            
+
             var factory = new Factory
             {
                 Id = 1, // This would come from the database
@@ -90,7 +90,7 @@ namespace Application.Implementations
         {
             // This is a simplified implementation
             // In a real application, you would validate against the database
-            
+
             // For demo purposes, accept any login with valid email format
             if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password))
             {
@@ -129,7 +129,7 @@ namespace Application.Implementations
             {
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var key = Encoding.ASCII.GetBytes(_configuration["JwtSettings:SecretKey"]);
-                
+
                 tokenHandler.ValidateToken(token, new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
@@ -154,7 +154,7 @@ namespace Application.Implementations
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_configuration["JwtSettings:SecretKey"]);
-            
+
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[]
@@ -178,7 +178,7 @@ namespace Application.Implementations
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_configuration["JwtSettings:SecretKey"]);
-            
+
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[]

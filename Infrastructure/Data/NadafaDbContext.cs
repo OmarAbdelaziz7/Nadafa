@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using System.Collections.Generic;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,11 +12,14 @@ namespace Infrastructure.Data
         {
         }
 
+        // All entities
         public DbSet<User> Users { get; set; }
         public DbSet<Factory> Factories { get; set; }
+        public DbSet<Payment> Payments { get; set; }
         public DbSet<PickupRequest> PickupRequests { get; set; }
         public DbSet<MarketplaceItem> MarketplaceItems { get; set; }
-        public DbSet<Payment> Payments { get; set; }
+        public DbSet<Purchase> Purchases { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -52,55 +57,6 @@ namespace Infrastructure.Data
                 entity.Property(e => e.IsVerified).IsRequired();
             });
 
-            // Configure PickupRequest entity
-            modelBuilder.Entity<PickupRequest>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-                entity.Property(e => e.MaterialType).IsRequired().HasMaxLength(100);
-                entity.Property(e => e.Description).IsRequired().HasMaxLength(500);
-                entity.Property(e => e.Price).IsRequired().HasColumnType("decimal(18,2)");
-                entity.Property(e => e.Weight).IsRequired().HasColumnType("decimal(18,2)");
-                entity.Property(e => e.WeightUnit).IsRequired().HasMaxLength(20);
-                entity.Property(e => e.RequestDate).IsRequired();
-                entity.Property(e => e.Status).IsRequired();
-                entity.Property(e => e.AdminNotes).HasMaxLength(1000);
-
-                entity.HasOne(e => e.User)
-                    .WithMany(u => u.PickupRequests)
-                    .HasForeignKey(e => e.UserId)
-                    .OnDelete(DeleteBehavior.Restrict);
-
-                entity.HasOne(e => e.ApprovedByAdmin)
-                    .WithMany()
-                    .HasForeignKey(e => e.ApprovedByAdminId)
-                    .OnDelete(DeleteBehavior.Restrict);
-            });
-
-            // Configure MarketplaceItem entity
-            modelBuilder.Entity<MarketplaceItem>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-                entity.Property(e => e.MaterialType).IsRequired().HasMaxLength(100);
-                entity.Property(e => e.Description).IsRequired().HasMaxLength(500);
-                entity.Property(e => e.Price).IsRequired().HasColumnType("decimal(18,2)");
-                entity.Property(e => e.Weight).IsRequired().HasColumnType("decimal(18,2)");
-                entity.Property(e => e.WeightUnit).IsRequired().HasMaxLength(20);
-                entity.Property(e => e.PublishedDate).IsRequired();
-                entity.Property(e => e.Status).IsRequired();
-                entity.Property(e => e.PurchasePrice).HasColumnType("decimal(18,2)");
-                entity.Property(e => e.StripePaymentIntentId).HasMaxLength(100);
-
-                entity.HasOne(e => e.PickupRequest)
-                    .WithOne(pr => pr.MarketplaceItem)
-                    .HasForeignKey<MarketplaceItem>(e => e.PickupRequestId)
-                    .OnDelete(DeleteBehavior.Restrict);
-
-                entity.HasOne(e => e.PurchasedByFactory)
-                    .WithMany(f => f.PurchasedItems)
-                    .HasForeignKey(e => e.PurchasedByFactoryId)
-                    .OnDelete(DeleteBehavior.Restrict);
-            });
-
             // Configure Payment entity
             modelBuilder.Entity<Payment>(entity =>
             {
@@ -126,18 +82,116 @@ namespace Infrastructure.Data
                     .OnDelete(DeleteBehavior.Restrict);
             });
 
-            // Seed initial admin user
-            modelBuilder.Entity<User>().HasData(new User
+            // Configure PickupRequest entity
+            modelBuilder.Entity<PickupRequest>(entity =>
             {
-                Id = 1,
-                Name = "Admin User",
-                Email = "admin@nadafa.com",
-                Address = "Admin Address",
-                Age = 30,
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123!"),
-                Role = Role.Admin,
-                CreatedAt = DateTime.UtcNow,
-                IsActive = true
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.MaterialType).IsRequired();
+                entity.Property(e => e.Quantity).IsRequired().HasColumnType("decimal(18,2)");
+                entity.Property(e => e.Unit).IsRequired();
+                entity.Property(e => e.ProposedPricePerUnit).IsRequired().HasColumnType("decimal(18,2)");
+                entity.Property(e => e.Description).IsRequired().HasMaxLength(500);
+                entity.Property(e => e.Status).IsRequired();
+                entity.Property(e => e.RequestDate).IsRequired();
+                entity.Property(e => e.AdminNotes).HasMaxLength(1000);
+                entity.Property(e => e.CreatedAt).IsRequired();
+                entity.Property(e => e.UpdatedAt).IsRequired();
+
+                // Configure ImageUrls as JSON with value comparer
+                entity.Property(e => e.ImageUrls)
+                    .HasConversion(
+                        v => string.Join(',', v),
+                        v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList()
+                    )
+                    .Metadata.SetValueComparer(new Microsoft.EntityFrameworkCore.ChangeTracking.ValueComparer<List<string>>(
+                        (c1, c2) => c1.SequenceEqual(c2),
+                        c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+                        c => c.ToList()));
+
+                entity.HasOne(e => e.User)
+                    .WithMany(u => u.PickupRequests)
+                    .HasForeignKey(e => e.UserId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.Admin)
+                    .WithMany(u => u.AdminApprovedRequests)
+                    .HasForeignKey(e => e.AdminId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // Configure MarketplaceItem entity
+            modelBuilder.Entity<MarketplaceItem>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.MaterialType).IsRequired();
+                entity.Property(e => e.Quantity).IsRequired().HasColumnType("decimal(18,2)");
+                entity.Property(e => e.Unit).IsRequired();
+                entity.Property(e => e.PricePerUnit).IsRequired().HasColumnType("decimal(18,2)");
+                entity.Property(e => e.Description).IsRequired().HasMaxLength(500);
+                entity.Property(e => e.IsAvailable).IsRequired();
+                entity.Property(e => e.PublishedAt).IsRequired();
+                entity.Property(e => e.CreatedAt).IsRequired();
+                entity.Property(e => e.UpdatedAt).IsRequired();
+
+                // Configure ImageUrls as JSON with value comparer
+                entity.Property(e => e.ImageUrls)
+                    .HasConversion(
+                        v => string.Join(',', v),
+                        v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList()
+                    )
+                    .Metadata.SetValueComparer(new Microsoft.EntityFrameworkCore.ChangeTracking.ValueComparer<List<string>>(
+                        (c1, c2) => c1.SequenceEqual(c2),
+                        c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+                        c => c.ToList()));
+
+                entity.HasOne(e => e.PickupRequest)
+                    .WithOne(pr => pr.MarketplaceItem)
+                    .HasForeignKey<MarketplaceItem>(e => e.PickupRequestId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.User)
+                    .WithMany(u => u.MarketplaceItems)
+                    .HasForeignKey(e => e.UserId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // Configure Purchase entity
+            modelBuilder.Entity<Purchase>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Quantity).IsRequired().HasColumnType("decimal(18,2)");
+                entity.Property(e => e.PricePerUnit).IsRequired().HasColumnType("decimal(18,2)");
+                entity.Property(e => e.StripePaymentIntentId).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.PaymentStatus).IsRequired();
+                entity.Property(e => e.PurchaseDate).IsRequired();
+                entity.Property(e => e.CreatedAt).IsRequired();
+                entity.Property(e => e.UpdatedAt).IsRequired();
+
+                entity.HasOne(e => e.MarketplaceItem)
+                    .WithOne(mi => mi.Purchase)
+                    .HasForeignKey<Purchase>(e => e.MarketplaceItemId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.Factory)
+                    .WithMany(f => f.Purchases)
+                    .HasForeignKey(e => e.FactoryId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // Configure Notification entity
+            modelBuilder.Entity<Notification>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Title).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Message).IsRequired().HasMaxLength(500);
+                entity.Property(e => e.IsRead).IsRequired();
+                entity.Property(e => e.NotificationType).IsRequired();
+                entity.Property(e => e.CreatedAt).IsRequired();
+
+                entity.HasOne(e => e.User)
+                    .WithMany(u => u.Notifications)
+                    .HasForeignKey(e => e.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
         }
     }
