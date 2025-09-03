@@ -3,6 +3,7 @@ import { Routes } from '@angular/router';
 import { AppComponent } from './app.component';
 import { AuthGuard } from './core/auth//guards/auth.guard';
 import { RoleGuard } from './core/auth/guards/role.guard';
+// import { HouseProducts } from './features/house-products/components/house-products.component';
 export const appRoutes: Routes = [
   {
   path: '',
@@ -12,6 +13,7 @@ export const appRoutes: Routes = [
 {
   path: 'auth',
   component: AppComponent,
+  // canActivate: [AuthGuard],
   children: [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
     { path: 'login', loadComponent: () => import('./features/auth/login/Components/login.component').then(m => m.Login) },
@@ -32,6 +34,11 @@ export const appRoutes: Routes = [
   //   data: { role: 'House' }
   // }
   ]
+},
+{
+path: 'house-products',
+loadComponent: () => import('./features/house-products/components/house-products.component').then(m => m.HouseProducts),
+// canActivate: [AuthGuard ],
 },
 { path: '**', redirectTo: 'auth/login' }
 
