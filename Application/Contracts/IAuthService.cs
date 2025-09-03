@@ -11,5 +11,7 @@ namespace Application.Contracts
         Task<bool> ValidateTokenAsync(string token);
         Task<AuthResponseDto> ChangePasswordAsync(string email, ChangePasswordDto request);
         Task<SignOutResponseDto> SignOutAsync(string token);
+        Task<AuthResponseDto> UpdateUserProfileAsync(string currentEmail, UpdateUserProfileDto request);
+        Task<AuthResponseDto> UpdateFactoryProfileAsync(string currentEmail, UpdateFactoryProfileDto request);
     }
 }

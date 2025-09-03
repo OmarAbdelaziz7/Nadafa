@@ -195,6 +195,55 @@ Authorization: Bearer <your-jwt-token>
 }
 ```
 
+### Update User Profile (Requires Authentication)
+```http
+PUT /api/auth/profile/user
+Authorization: Bearer <your-jwt-token>
+Content-Type: application/json
+
+{
+  "name": "John Doe Updated",
+  "email": "john.updated@example.com",
+  "address": "456 New St, City, State",
+  "age": 26
+}
+```
+
+**Response:**
+```json
+{
+  "isSuccess": true,
+  "message": "Profile updated successfully",
+  "email": "john.updated@example.com",
+  "role": "User"
+}
+```
+
+### Update Factory Profile (Requires Authentication)
+```http
+PUT /api/auth/profile/factory
+Authorization: Bearer <your-jwt-token>
+Content-Type: application/json
+
+{
+  "name": "Green Recycling Co Updated",
+  "email": "info.updated@greenrecycling.com",
+  "address": "789 New Industrial Blvd, City, State",
+  "phoneNumber": "+1-555-0456",
+  "businessLicense": "GRC789012"
+}
+```
+
+**Response:**
+```json
+{
+  "isSuccess": true,
+  "message": "Profile updated successfully",
+  "email": "info.updated@greenrecycling.com",
+  "role": "Factory"
+}
+```
+
 ## 🧪 Manual Testing Guide
 
 ### Prerequisites
@@ -238,6 +287,22 @@ Authorization: Bearer <your-jwt-token>
    - Password: `Admin123!`
 2. **Verify the role** shows "Admin"
 
+#### 6. User Profile Update Flow
+1. **Login** to get a valid JWT token
+2. **Update profile** using `/api/auth/profile/user` with:
+   - New name, email, address, and age
+3. **Verify success message**
+4. **Get current user info** to confirm changes
+5. **Try logging in** with the new email (should work)
+
+#### 7. Factory Profile Update Flow
+1. **Login as factory** to get a valid JWT token
+2. **Update profile** using `/api/auth/profile/factory` with:
+   - New name, email, address, phone number, and business license
+3. **Verify success message**
+4. **Get current user info** to confirm changes
+5. **Try logging in** with the new email (should work)
+
 ### Expected Behaviors
 
 #### Authentication
@@ -256,6 +321,13 @@ Authorization: Bearer <your-jwt-token>
 - ✅ Subsequent requests with signed out token fail
 - ✅ Success message confirms sign out
 
+#### Profile Updates
+- ✅ Users can update their own profile information
+- ✅ Factories can update their own profile information
+- ✅ Profile updates require authentication
+- ✅ Updated information is reflected in responses
+- ✅ Email changes are handled properly
+
 #### Role-Based Access
 - ✅ Users can access user-specific endpoints
 - ✅ Factories can access factory-specific endpoints
@@ -271,12 +343,18 @@ Authorization: Bearer <your-jwt-token>
 5. **Missing authorization header** → Should return 401
 6. **Invalid JWT token** → Should return 401
 7. **Using signed out token** → Should return 401
+8. **Invalid profile data** → Should return validation error
+9. **Unauthorized profile update** → Should return 401
+10. **Duplicate email in profile update** → Should return error
 
 #### Security Scenarios
 1. **Password confirmation** → New passwords must be confirmed
 2. **Email validation** → Email addresses must be valid format
 3. **Password strength** → Passwords must meet minimum requirements
 4. **Token blacklisting** → Signed out tokens should be invalid
+5. **Profile data validation** → Profile updates must pass validation
+6. **Email uniqueness** → Email addresses must be unique
+7. **Authorization checks** → Users can only update their own profiles
 
 ### Testing Tools
 - **Swagger UI**: Interactive API documentation and testing

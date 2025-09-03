@@ -90,4 +90,46 @@ namespace Application.DTOs
         public bool IsSuccess { get; set; }
         public string Message { get; set; }
     }
+
+    public class UpdateUserProfileDto
+    {
+        [Required]
+        [StringLength(100, MinimumLength = 2)]
+        public string Name { get; set; }
+
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
+
+        [Required]
+        [StringLength(200)]
+        public string Address { get; set; }
+
+        [Required]
+        [Range(18, 120)]
+        public int Age { get; set; }
+    }
+
+    public class UpdateFactoryProfileDto
+    {
+        [Required]
+        [StringLength(100, MinimumLength = 2)]
+        public string Name { get; set; }
+
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
+
+        [Required]
+        [StringLength(200)]
+        public string Address { get; set; }
+
+        [Required]
+        [Phone]
+        public string PhoneNumber { get; set; }
+
+        [Required]
+        [StringLength(50)]
+        public string BusinessLicense { get; set; }
+    }
 }

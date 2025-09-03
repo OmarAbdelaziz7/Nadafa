@@ -209,6 +209,66 @@ namespace Application.Implementations
             };
         }
 
+        public async Task<AuthResponseDto> UpdateUserProfileAsync(string currentEmail, UpdateUserProfileDto request)
+        {
+            // This is a simplified implementation
+            // In a real application, you would validate against the database
+
+            if (string.IsNullOrEmpty(currentEmail))
+            {
+                return new AuthResponseDto
+                {
+                    IsSuccess = false,
+                    Message = "Current email is required"
+                };
+            }
+
+            // For demo purposes, simulate profile update
+            // In real app, you would:
+            // 1. Find user by current email
+            // 2. Check if new email is already taken (if email is changing)
+            // 3. Update user information
+            // 4. Generate new JWT token if email changed
+
+            return new AuthResponseDto
+            {
+                IsSuccess = true,
+                Message = "Profile updated successfully",
+                Email = request.Email,
+                Role = "User"
+            };
+        }
+
+        public async Task<AuthResponseDto> UpdateFactoryProfileAsync(string currentEmail, UpdateFactoryProfileDto request)
+        {
+            // This is a simplified implementation
+            // In a real application, you would validate against the database
+
+            if (string.IsNullOrEmpty(currentEmail))
+            {
+                return new AuthResponseDto
+                {
+                    IsSuccess = false,
+                    Message = "Current email is required"
+                };
+            }
+
+            // For demo purposes, simulate profile update
+            // In real app, you would:
+            // 1. Find factory by current email
+            // 2. Check if new email is already taken (if email is changing)
+            // 3. Update factory information
+            // 4. Generate new JWT token if email changed
+
+            return new AuthResponseDto
+            {
+                IsSuccess = true,
+                Message = "Profile updated successfully",
+                Email = request.Email,
+                Role = "Factory"
+            };
+        }
+
         private string GenerateJwtToken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();

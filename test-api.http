@@ -75,6 +75,31 @@ Content-Type: application/json
 POST {{baseUrl}}/api/auth/signout
 Authorization: Bearer {{authToken}}
 
+### 10. Update User Profile (Requires authentication)
+PUT {{baseUrl}}/api/auth/profile/user
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "name": "John Doe Updated",
+  "email": "john.updated@example.com",
+  "address": "456 New St, City, State",
+  "age": 26
+}
+
+### 11. Update Factory Profile (Requires authentication)
+PUT {{baseUrl}}/api/auth/profile/factory
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "name": "Green Recycling Co Updated",
+  "email": "info.updated@greenrecycling.com",
+  "address": "789 New Industrial Blvd, City, State",
+  "phoneNumber": "+1-555-0456",
+  "businessLicense": "GRC789012"
+}
+
 ### Variables (set these in your HTTP client)
 # @baseUrl = https://localhost:5001
 # @authToken = your-jwt-token-here

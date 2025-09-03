@@ -148,5 +148,55 @@ namespace Presentation.Controllers
 
             return BadRequest(result);
         }
+
+        [HttpPut("profile/user")]
+        [Authorize]
+        public async Task<ActionResult<AuthResponseDto>> UpdateUserProfile([FromBody] UpdateUserProfileDto request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var currentEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+            if (string.IsNullOrEmpty(currentEmail))
+            {
+                return BadRequest("User email not found in token");
+            }
+
+            var result = await _authService.UpdateUserProfileAsync(currentEmail, request);
+
+            if (result.IsSuccess)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result);
+        }
+
+        [HttpPut("profile/factory")]
+        [Authorize]
+        public async Task<ActionResult<AuthResponseDto>> UpdateFactoryProfile([FromBody] UpdateFactoryProfileDto request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var currentEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+            if (string.IsNullOrEmpty(currentEmail))
+            {
+                return BadRequest("Factory email not found in token");
+            }
+
+            var result = await _authService.UpdateFactoryProfileAsync(currentEmail, request);
+
+            if (result.IsSuccess)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result);
+        }
     }
 }
