@@ -38,7 +38,7 @@ export const appRoutes: Routes = [
 {
 path: 'house-products',
 loadComponent: () => import('./features/house-products/components/house-products.component').then(m => m.HouseProducts),
-// canActivate: [AuthGuard ],
+canActivate: [AuthGuard ],
 },
 { path: '**', redirectTo: 'auth/login' }
 

@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterLink, RouterModule } from '@angular/router';
 import { AuthService } from '../../Services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, FormsModule, RouterLink],
   templateUrl: './login.component.html',
   styleUrls: ['./login.css']
 })
@@ -44,7 +44,7 @@ export class Login {
           if (payload.userType === 'factory') {
             this.router.navigate(['/factory']);
           } else {
-            this.router.navigate(['/house']);
+            this.router.navigate(['house-products']);
           }
         },
         error: (err: any) => console.error('Error', err)
