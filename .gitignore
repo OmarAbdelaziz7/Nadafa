@@ -267,5 +267,8 @@ __pycache__/
 # Cake - Uncomment if you are using it
 # tools/
 
+# Application configuration files
+*appsettings.json*
+
 TenderApp.Infrastructure/Utilities/DbConnection.cs
 TenderApp.Presentation/wwwroot/*

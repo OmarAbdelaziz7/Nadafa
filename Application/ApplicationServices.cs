@@ -2,17 +2,26 @@
 using Application.Implementations;
 using Microsoft.Extensions.DependencyInjection;
 
-
 namespace Application
 {
     public static class ApplicationServices
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
+            // Auth Services
             services.AddScoped<IAuthService, AuthService>();
-            //services.AddScoped<IUnitOfWork, UnitOfWork>();
-            //services.AddScoped<ISP_Call, SP_Call>();
-            //services.AddScoped<IEmailService, EmailService>();
+
+            // Pickup Request Services
+            services.AddScoped<IPickupRequestService, PickupRequestService>();
+
+            // Marketplace Services
+            services.AddScoped<IMarketplaceService, MarketplaceService>();
+
+            // Purchase Services
+            services.AddScoped<IPurchaseService, PurchaseService>();
+
+            // Notification Services
+            services.AddScoped<INotificationService, NotificationService>();
 
             return services;
         }

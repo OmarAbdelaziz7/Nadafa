@@ -50,7 +50,7 @@ namespace Presentation
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "NADAFA Recycling Platform API", Version = "v1" });
-                
+
                 // Add JWT authentication to Swagger
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
@@ -60,7 +60,7 @@ namespace Presentation
                     Type = SecuritySchemeType.ApiKey,
                     Scheme = "Bearer"
                 });
-                
+
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
                     {
@@ -121,8 +121,10 @@ namespace Presentation
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "NADAFA API v1"));
             }
-
-            app.UseHttpsRedirection();
+            else
+            {
+                app.UseHttpsRedirection();
+            }
 
             app.UseRouting();
 
