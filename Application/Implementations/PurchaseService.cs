@@ -14,17 +14,20 @@ namespace Application.Implementations
         private readonly IMarketplaceRepository _marketplaceRepository;
         private readonly IPaymentService _paymentService;
         private readonly INotificationService _notificationService;
+        private readonly IEmailService _emailService;
 
         public PurchaseService(
             IPurchaseRepository purchaseRepository,
             IMarketplaceRepository marketplaceRepository,
             IPaymentService paymentService,
-            INotificationService notificationService)
+            INotificationService notificationService,
+            IEmailService emailService)
         {
             _purchaseRepository = purchaseRepository;
             _marketplaceRepository = marketplaceRepository;
             _paymentService = paymentService;
             _notificationService = notificationService;
+            _emailService = emailService;
         }
 
         public async Task<PurchaseResponseDto> ProcessPurchaseAsync(CreatePurchaseDto dto, int factoryId)
@@ -164,6 +167,20 @@ namespace Application.Implementations
                     Message = $"Your {marketplaceItem.MaterialType} item has been sold. Quantity: {purchase.Quantity} {marketplaceItem.Unit}, Amount: ${purchase.TotalAmount}",
                     IsRead = false
                 });
+
+                // Send email notifications
+                try
+                {
+                    // Send item sold notification to original seller
+                    await _emailService.SendItemSoldNotificationAsync(
+                        marketplaceItem.User?.Email ?? "seller@example.com",
+                        marketplaceItem,
+                        purchase);
+                }
+                catch (Exception ex)
+                {
+                    // Log email failure but don't fail the notification process
+                }
             }
             catch (Exception)
             {

@@ -1,5 +1,6 @@
 ﻿using Infrastructure.Data;
 using Infrastructure.Repositories;
+using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +24,9 @@ namespace Infrastructure
             services.AddScoped<IMarketplaceRepository, MarketplaceRepository>();
             services.AddScoped<IPurchaseRepository, PurchaseRepository>();
             services.AddScoped<INotificationRepository, NotificationRepository>();
+
+            // Register Email Service
+            services.AddScoped<Application.Contracts.IEmailService, SendGridEmailService>();
 
             return services;
         }

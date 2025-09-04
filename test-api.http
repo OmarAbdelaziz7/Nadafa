@@ -112,5 +112,5 @@ Content-Type: application/json
 }
 
 ### Variables (set these in your HTTP client)
-# @baseUrl = https://localhost:5001
+# @baseUrl = https://localhost:5294
 # @authToken = your-jwt-token-here

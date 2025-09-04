@@ -17,6 +17,7 @@ namespace Application.Implementations
         private readonly IPurchaseRepository _purchaseRepository;
         private readonly IMarketplaceRepository _marketplaceRepository;
         private readonly INotificationRepository _notificationRepository;
+        private readonly IEmailService _emailService;
 
         public StripePaymentService(
             IConfiguration configuration,
@@ -24,7 +25,8 @@ namespace Application.Implementations
             IPickupRequestRepository pickupRequestRepository,
             IPurchaseRepository purchaseRepository,
             IMarketplaceRepository marketplaceRepository,
-            INotificationRepository notificationRepository)
+            INotificationRepository notificationRepository,
+            IEmailService emailService)
         {
             _configuration = configuration;
             _logger = logger;
@@ -32,6 +34,7 @@ namespace Application.Implementations
             _purchaseRepository = purchaseRepository;
             _marketplaceRepository = marketplaceRepository;
             _notificationRepository = notificationRepository;
+            _emailService = emailService;
 
             // Configure Stripe with test secret key
             StripeConfiguration.ApiKey = _configuration["Stripe:SecretKey"];
@@ -62,6 +65,19 @@ namespace Application.Implementations
                 // Log payment
                 await LogPaymentAsync(paymentIntent.Id, amount, "usd", "succeeded",
                     $"Pickup payment for request {pickupRequestId}", pickupRequest.User?.Email);
+
+                // Send email confirmation
+                try
+                {
+                    await _emailService.SendPaymentConfirmationAsync(
+                        pickupRequest.User?.Email ?? "user@example.com",
+                        amount,
+                        $"Pickup payment for request {pickupRequestId}");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to send payment confirmation email");
+                }
 
                 _logger.LogInformation($"Successfully processed pickup payment. PaymentIntentId: {paymentIntent.Id}");
 
@@ -128,6 +144,31 @@ namespace Application.Implementations
                 // Log payment
                 await LogPaymentAsync(paymentIntent.Id, purchase.TotalAmount, "usd", "succeeded",
                     $"Purchase payment for item {purchase.MarketplaceItemId}", purchase.Factory?.Email);
+
+                // Send email notifications
+                try
+                {
+                    // Send purchase confirmation to factory
+                    await _emailService.SendPurchaseConfirmationAsync(
+                        purchase.Factory?.Email ?? "factory@example.com",
+                        purchase);
+
+                    // Send payment receipt to factory
+                    await _emailService.SendPaymentReceiptAsync(
+                        purchase.Factory?.Email ?? "factory@example.com",
+                        new Domain.Entities.Payment
+                        {
+                            Id = Guid.NewGuid(),
+                            Amount = purchase.TotalAmount,
+                            PaymentMethod = "Stripe",
+                            Status = Domain.Entities.PaymentStatus.Completed,
+                            PaymentDate = DateTime.UtcNow
+                        });
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to send purchase confirmation emails");
+                }
 
                 _logger.LogInformation($"Successfully processed purchase payment. PaymentIntentId: {paymentIntent.Id}");
 

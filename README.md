@@ -90,7 +90,7 @@ dotnet ef database update
 dotnet run
 ```
 
-The API will be available at: `https://localhost:5001` or `http://localhost:5000`
+The API will be available at: `https://localhost:5294` or `http://localhost:5294`
 
 ## 🔐 Authentication Endpoints
 
@@ -273,7 +273,7 @@ Content-Type: application/json
 
 ### Prerequisites
 1. Ensure the API is running: `dotnet run -p Presentation`
-2. Open Swagger UI: `https://localhost:5001/swagger`
+2. Open Swagger UI: `https://localhost:5294/swagger`
 3. Have a test user registered (use the registration endpoints)
 
 ### Test Scenarios
@@ -486,7 +486,7 @@ All password-related operations work with the existing `PasswordHash` fields in 
 
 ## 🧪 Testing with Swagger
 
-1. Open your browser and navigate to: `https://localhost:5001/swagger`
+1. Open your browser and navigate to: `https://localhost:5294/swagger`
 2. Use the Swagger UI to test all endpoints
 3. For protected endpoints, click "Authorize" and enter your JWT token
 
@@ -559,7 +559,7 @@ The platform uses Stripe in test mode with hardcoded test card details:
 
 ```bash
 # 1. Register a user
-curl -X POST "https://localhost:5001/api/auth/register/user" \
+curl -X POST "https://localhost:5294/api/auth/register/user" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Test User",
@@ -570,7 +570,7 @@ curl -X POST "https://localhost:5001/api/auth/register/user" \
   }'
 
 # 2. Login as user and get token
-curl -X POST "https://localhost:5001/api/auth/login" \
+curl -X POST "https://localhost:5294/api/auth/login" \
   -H "Content-Type: application/json" \
   -d '{
     "email": "user@test.com",
@@ -578,7 +578,7 @@ curl -X POST "https://localhost:5001/api/auth/login" \
   }'
 
 # 3. Create pickup request
-curl -X POST "https://localhost:5001/api/pickup-requests" \
+curl -X POST "https://localhost:5294/api/pickup-requests" \
   -H "Authorization: Bearer {user_token}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -590,7 +590,7 @@ curl -X POST "https://localhost:5001/api/pickup-requests" \
   }'
 
 # 4. Login as admin and approve request (triggers automatic payment)
-curl -X POST "https://localhost:5001/api/pickup-requests/{requestId}/approve" \
+curl -X POST "https://localhost:5294/api/pickup-requests/{requestId}/approve" \
   -H "Authorization: Bearer {admin_token}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -602,7 +602,7 @@ curl -X POST "https://localhost:5001/api/pickup-requests/{requestId}/approve" \
 
 ```bash
 # 1. Register a factory
-curl -X POST "https://localhost:5001/api/auth/register/factory" \
+curl -X POST "https://localhost:5294/api/auth/register/factory" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Test Factory",
@@ -614,7 +614,7 @@ curl -X POST "https://localhost:5001/api/auth/register/factory" \
   }'
 
 # 2. Login as factory and create purchase
-curl -X POST "https://localhost:5001/api/purchases" \
+curl -X POST "https://localhost:5294/api/purchases" \
   -H "Authorization: Bearer {factory_token}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -623,7 +623,7 @@ curl -X POST "https://localhost:5001/api/purchases" \
   }'
 
 # 3. Process payment (direct payment to seller)
-curl -X POST "https://localhost:5001/api/payment/purchase/{purchaseId}" \
+curl -X POST "https://localhost:5294/api/payment/purchase/{purchaseId}" \
   -H "Authorization: Bearer {factory_token}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -637,7 +637,7 @@ curl -X POST "https://localhost:5001/api/payment/purchase/{purchaseId}" \
 
 ```bash
 # Test payment with hardcoded card
-curl -X POST "https://localhost:5001/api/payment/test" \
+curl -X POST "https://localhost:5294/api/payment/test" \
   -H "Content-Type: application/json" \
   -d '{
     "amount": 25.00,
@@ -651,7 +651,7 @@ curl -X POST "https://localhost:5001/api/payment/test" \
 
 ```bash
 # Check payment status
-curl -X GET "https://localhost:5001/api/payment/status/{paymentIntentId}" \
+curl -X GET "https://localhost:5294/api/payment/status/{paymentIntentId}" \
   -H "Authorization: Bearer {token}"
 ```
 
@@ -661,7 +661,7 @@ Import the following environment variables into Postman:
 
 ```json
 {
-  "baseUrl": "https://localhost:5001",
+  "baseUrl": "https://localhost:5294",
   "userToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
   "adminToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
   "factoryToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
@@ -768,5 +768,5 @@ cd Infrastructure
  dotnet run -p Presentation
 
 # Swagger
-# https://localhost:5001/swagger
+# https://localhost:5294/swagger
 ```

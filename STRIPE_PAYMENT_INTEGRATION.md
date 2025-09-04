@@ -167,7 +167,7 @@ Stripe-Signature: {webhook_signature}
 
 ```bash
 # 1. Create pickup request
-curl -X POST "https://localhost:5001/api/pickup-requests" \
+curl -X POST "https://localhost:5294/api/pickup-requests" \
   -H "Authorization: Bearer {user_token}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -179,7 +179,7 @@ curl -X POST "https://localhost:5001/api/pickup-requests" \
   }'
 
 # 2. Approve pickup request (triggers automatic payment)
-curl -X POST "https://localhost:5001/api/pickup-requests/{requestId}/approve" \
+curl -X POST "https://localhost:5294/api/pickup-requests/{requestId}/approve" \
   -H "Authorization: Bearer {admin_token}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -191,7 +191,7 @@ curl -X POST "https://localhost:5001/api/pickup-requests/{requestId}/approve" \
 
 ```bash
 # 1. Create purchase
-curl -X POST "https://localhost:5001/api/purchases" \
+curl -X POST "https://localhost:5294/api/purchases" \
   -H "Authorization: Bearer {factory_token}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -200,7 +200,7 @@ curl -X POST "https://localhost:5001/api/purchases" \
   }'
 
 # 2. Process payment
-curl -X POST "https://localhost:5001/api/payment/purchase/{purchaseId}" \
+curl -X POST "https://localhost:5294/api/payment/purchase/{purchaseId}" \
   -H "Authorization: Bearer {factory_token}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -214,7 +214,7 @@ curl -X POST "https://localhost:5001/api/payment/purchase/{purchaseId}" \
 
 ```bash
 # Test payment with hardcoded card
-curl -X POST "https://localhost:5001/api/payment/test" \
+curl -X POST "https://localhost:5294/api/payment/test" \
   -H "Content-Type: application/json" \
   -d '{
     "amount": 25.00,
@@ -230,7 +230,7 @@ curl -X POST "https://localhost:5001/api/payment/test" \
 
 ```json
 {
-  "baseUrl": "https://localhost:5001",
+  "baseUrl": "https://localhost:5294",
   "userToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
   "adminToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
   "factoryToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
@@ -304,7 +304,7 @@ curl -X POST "https://localhost:5001/api/payment/test" \
 stripe login
 
 # Forward webhooks to local server
-stripe listen --forward-to localhost:5001/api/payment/webhook
+stripe listen --forward-to localhost:5294/api/payment/webhook
 
 # Trigger test webhook
 stripe trigger payment_intent.succeeded

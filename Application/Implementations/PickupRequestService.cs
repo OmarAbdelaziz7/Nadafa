@@ -14,17 +14,20 @@ namespace Application.Implementations
         private readonly IPaymentService _paymentService;
         private readonly INotificationService _notificationService;
         private readonly IMarketplaceRepository _marketplaceRepository;
+        private readonly IEmailService _emailService;
 
         public PickupRequestService(
             IPickupRequestRepository pickupRequestRepository,
             IPaymentService paymentService,
             INotificationService notificationService,
-            IMarketplaceRepository marketplaceRepository)
+            IMarketplaceRepository marketplaceRepository,
+            IEmailService emailService)
         {
             _pickupRequestRepository = pickupRequestRepository;
             _paymentService = paymentService;
             _notificationService = notificationService;
             _marketplaceRepository = marketplaceRepository;
+            _emailService = emailService;
         }
 
         public async Task<PickupRequestResponseDto> CreateRequestAsync(CreatePickupRequestDto dto, int userId)
@@ -44,6 +47,18 @@ namespace Application.Implementations
             };
 
             var createdRequest = await _pickupRequestRepository.CreateAsync(pickupRequest);
+
+            // Send email confirmation to user
+            try
+            {
+                await _emailService.SendPickupRequestConfirmationAsync("user@example.com", createdRequest); // TODO: Get actual user email
+            }
+            catch (Exception ex)
+            {
+                // Log email failure but don't fail the request creation
+                // In production, you might want to use a proper logging service
+            }
+
             return MapToResponseDto(createdRequest);
         }
 
@@ -139,6 +154,16 @@ namespace Application.Implementations
                 // Send notifications
                 await SendApprovalNotificationsAsync(updatedRequest, paymentResult);
 
+                // Send email notifications
+                try
+                {
+                    await _emailService.SendPickupApprovalAsync("user@example.com", updatedRequest, request.TotalEstimatedPrice); // TODO: Get actual user email
+                }
+                catch (Exception ex)
+                {
+                    // Log email failure but don't fail the approval process
+                }
+
                 return MapToResponseDto(updatedRequest);
             }
             catch (Exception)
@@ -161,6 +186,16 @@ namespace Application.Implementations
             request.AdminNotes = dto.Notes;
 
             var updatedRequest = await _pickupRequestRepository.UpdateAsync(request);
+
+            // Send email notification for rejection
+            try
+            {
+                await _emailService.SendPickupRejectionAsync("user@example.com", updatedRequest, dto.Notes); // TODO: Get actual user email
+            }
+            catch (Exception ex)
+            {
+                // Log email failure but don't fail the rejection process
+            }
 
             return MapToResponseDto(updatedRequest);
         }
