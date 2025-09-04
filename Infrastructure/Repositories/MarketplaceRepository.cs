@@ -101,5 +101,13 @@ namespace Infrastructure.Repositories
                              mi.MaterialType.ToString().Contains(searchTerm)))
                 .CountAsync();
         }
+
+        public async Task<MarketplaceItem> UpdateAsync(MarketplaceItem item)
+        {
+            item.UpdateTimestamp();
+            _context.MarketplaceItems.Update(item);
+            await _context.SaveChangesAsync();
+            return item;
+        }
     }
 }

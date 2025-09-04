@@ -23,6 +23,9 @@ namespace Application
             // Notification Services
             services.AddScoped<INotificationService, NotificationService>();
 
+            // Payment Services
+            services.AddScoped<IPaymentService, StripePaymentService>();
+
             return services;
         }
     }

@@ -13,5 +13,7 @@ namespace Infrastructure.Repositories
         Task<Purchase> UpdatePaymentStatusAsync(Guid purchaseId, PaymentStatus status);
         Task<Purchase> GetByIdAsync(Guid id);
         Task<int> GetTotalCountByFactoryIdAsync(int factoryId);
+        Task<Purchase> UpdateAsync(Purchase purchase);
+        Task<bool> DeleteAsync(Guid id);
     }
 }

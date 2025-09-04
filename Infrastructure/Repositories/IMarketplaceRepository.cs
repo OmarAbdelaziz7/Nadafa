@@ -14,5 +14,6 @@ namespace Infrastructure.Repositories
         Task<IEnumerable<MarketplaceItem>> SearchItemsAsync(string searchTerm, int page, int pageSize);
         Task<int> GetTotalAvailableCountAsync(MaterialType? filter);
         Task<int> GetTotalSearchCountAsync(string searchTerm);
+        Task<MarketplaceItem> UpdateAsync(MarketplaceItem item);
     }
 }

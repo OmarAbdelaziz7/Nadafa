@@ -77,5 +77,24 @@ namespace Infrastructure.Repositories
                 .Where(p => p.FactoryId == factoryId)
                 .CountAsync();
         }
+
+        public async Task<Purchase> UpdateAsync(Purchase purchase)
+        {
+            purchase.UpdateTimestamp();
+            _context.Purchases.Update(purchase);
+            await _context.SaveChangesAsync();
+            return purchase;
+        }
+
+        public async Task<bool> DeleteAsync(Guid id)
+        {
+            var purchase = await _context.Purchases.FindAsync(id);
+            if (purchase == null)
+                return false;
+
+            _context.Purchases.Remove(purchase);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }

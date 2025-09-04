@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Application.Contracts;
+using Application.DTOs;
 using Domain.Entities;
 using Infrastructure.Repositories;
 
@@ -51,6 +52,29 @@ namespace Application.Implementations
                 throw new ArgumentException("Notification not found");
 
             return notification;
+        }
+
+        public async Task<bool> SendNotificationAsync(NotificationDto notificationDto)
+        {
+            try
+            {
+                var notification = new Notification
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = notificationDto.UserId,
+                    Title = notificationDto.Title,
+                    Message = notificationDto.Message,
+                    NotificationType = notificationDto.Type,
+                    IsRead = notificationDto.IsRead
+                };
+
+                await _notificationRepository.CreateAsync(notification);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

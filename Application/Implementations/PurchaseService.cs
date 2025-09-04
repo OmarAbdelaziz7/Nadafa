@@ -12,58 +12,87 @@ namespace Application.Implementations
     {
         private readonly IPurchaseRepository _purchaseRepository;
         private readonly IMarketplaceRepository _marketplaceRepository;
+        private readonly IPaymentService _paymentService;
         private readonly INotificationService _notificationService;
 
         public PurchaseService(
             IPurchaseRepository purchaseRepository,
             IMarketplaceRepository marketplaceRepository,
+            IPaymentService paymentService,
             INotificationService notificationService)
         {
             _purchaseRepository = purchaseRepository;
             _marketplaceRepository = marketplaceRepository;
+            _paymentService = paymentService;
             _notificationService = notificationService;
         }
 
-        public async Task<PurchaseResponseDto> CreatePurchaseAsync(CreatePurchaseDto dto, int factoryId)
+        public async Task<PurchaseResponseDto> ProcessPurchaseAsync(CreatePurchaseDto dto, int factoryId)
         {
-            // Check if marketplace item exists and is available
-            var marketplaceItem = await _marketplaceRepository.GetByIdAsync(dto.MarketplaceItemId);
-            if (marketplaceItem == null)
-                throw new ArgumentException("Marketplace item not found");
-
-            if (!marketplaceItem.IsAvailable)
-                throw new InvalidOperationException("Marketplace item is not available for purchase");
-
-            // Check if item is already purchased
-            var existingPurchase = await _purchaseRepository.GetByMarketplaceItemIdAsync(dto.MarketplaceItemId);
-            if (existingPurchase != null)
-                throw new InvalidOperationException("Item has already been purchased");
-
-            var purchase = new Purchase
+            try
             {
-                Id = Guid.NewGuid(),
-                MarketplaceItemId = dto.MarketplaceItemId,
-                FactoryId = factoryId,
-                Quantity = dto.Quantity,
-                PricePerUnit = dto.PricePerUnit,
-                StripePaymentIntentId = dto.StripePaymentIntentId,
-                PaymentStatus = PaymentStatus.Pending,
-                PurchaseDate = DateTime.UtcNow
-            };
+                // Validate marketplace item availability
+                var marketplaceItem = await _marketplaceRepository.GetByIdAsync(dto.MarketplaceItemId);
+                if (marketplaceItem == null)
+                {
+                    throw new ArgumentException($"Marketplace item {dto.MarketplaceItemId} not found");
+                }
 
-            var createdPurchase = await _purchaseRepository.CreateAsync(purchase);
+                if (!marketplaceItem.IsAvailable)
+                {
+                    throw new InvalidOperationException($"Marketplace item {dto.MarketplaceItemId} is not available");
+                }
 
-            // Mark marketplace item as unavailable
-            await _marketplaceRepository.UpdateAvailabilityAsync(dto.MarketplaceItemId, false);
+                if (marketplaceItem.Quantity < dto.Quantity)
+                {
+                    throw new InvalidOperationException($"Insufficient quantity available. Requested: {dto.Quantity}, Available: {marketplaceItem.Quantity}");
+                }
 
-            // Create notification for the seller
-            await _notificationService.CreateNotificationAsync(
-                marketplaceItem.UserId,
-                "Item Sold",
-                $"Your {marketplaceItem.MaterialType} item has been purchased by a factory.",
-                NotificationType.ItemSold);
+                // Create purchase record
+                var purchase = new Purchase
+                {
+                    Id = Guid.NewGuid(),
+                    MarketplaceItemId = dto.MarketplaceItemId,
+                    FactoryId = factoryId,
+                    Quantity = dto.Quantity,
+                    PricePerUnit = marketplaceItem.PricePerUnit,
+                    TotalAmount = dto.Quantity * marketplaceItem.PricePerUnit,
+                    PaymentStatus = PaymentStatus.Pending,
+                    PurchaseDate = DateTime.UtcNow
+                };
 
-            return MapToResponseDto(createdPurchase);
+                purchase.CalculateTotalAmount();
+
+                var createdPurchase = await _purchaseRepository.CreateAsync(purchase);
+
+                // Process Stripe payment
+                var paymentResult = await _paymentService.ProcessPurchasePaymentAsync(createdPurchase.Id, factoryId);
+
+                if (!paymentResult.IsSuccess)
+                {
+                    // Rollback purchase if payment fails
+                    await _purchaseRepository.DeleteAsync(createdPurchase.Id);
+                    throw new InvalidOperationException($"Payment failed: {paymentResult.Message}");
+                }
+
+                // Update marketplace item availability
+                marketplaceItem.Quantity -= dto.Quantity;
+                if (marketplaceItem.Quantity <= 0)
+                {
+                    marketplaceItem.IsAvailable = false;
+                }
+                marketplaceItem.UpdateTimestamp();
+                await _marketplaceRepository.UpdateAsync(marketplaceItem);
+
+                // Send notifications
+                await SendPurchaseNotificationsAsync(createdPurchase, marketplaceItem);
+
+                return MapToResponseDto(createdPurchase, paymentResult);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public async Task<PaginatedPurchasesDto> GetByFactoryIdAsync(int factoryId, int page, int pageSize)
@@ -73,7 +102,7 @@ namespace Application.Implementations
 
             return new PaginatedPurchasesDto
             {
-                Items = purchases.Select(MapToResponseDto),
+                Items = purchases.Select(p => MapToResponseDto(p)),
                 TotalCount = totalCount,
                 Page = page,
                 PageSize = pageSize,
@@ -81,6 +110,26 @@ namespace Application.Implementations
                 HasNextPage = page * pageSize < totalCount,
                 HasPreviousPage = page > 1
             };
+        }
+
+        public async Task<PurchaseResponseDto> CreatePurchaseAsync(CreatePurchaseDto dto, int factoryId)
+        {
+            // This method is now replaced by ProcessPurchaseAsync
+            // Keeping for interface compatibility
+            return await ProcessPurchaseAsync(dto, factoryId);
+        }
+
+        public async Task<PurchaseResponseDto> UpdatePaymentStatusAsync(Guid purchaseId, UpdatePaymentStatusDto dto)
+        {
+            var purchase = await _purchaseRepository.GetByIdAsync(purchaseId);
+            if (purchase == null)
+                throw new ArgumentException("Purchase not found");
+
+            purchase.PaymentStatus = dto.Status;
+            purchase.UpdateTimestamp();
+            await _purchaseRepository.UpdateAsync(purchase);
+
+            return MapToResponseDto(purchase);
         }
 
         public async Task<PurchaseResponseDto> GetByIdAsync(Guid id)
@@ -92,43 +141,37 @@ namespace Application.Implementations
             return MapToResponseDto(purchase);
         }
 
-        public async Task<PurchaseResponseDto> UpdatePaymentStatusAsync(Guid purchaseId, UpdatePaymentStatusDto dto)
+        private async Task SendPurchaseNotificationsAsync(Purchase purchase, MarketplaceItem marketplaceItem)
         {
-            var purchase = await _purchaseRepository.UpdatePaymentStatusAsync(purchaseId, dto.Status);
-            if (purchase == null)
-                throw new ArgumentException("Purchase not found");
-
-            // Create notification based on payment status
-            var marketplaceItem = await _marketplaceRepository.GetByIdAsync(purchase.MarketplaceItemId);
-            if (marketplaceItem != null)
+            try
             {
-                string notificationTitle = dto.Status switch
+                // Notify factory about successful purchase
+                await _notificationService.SendNotificationAsync(new NotificationDto
                 {
-                    PaymentStatus.Completed => "Payment Completed",
-                    PaymentStatus.Failed => "Payment Failed",
-                    PaymentStatus.Refunded => "Payment Refunded",
-                    _ => "Payment Status Updated"
-                };
+                    UserId = purchase.FactoryId,
+                    Type = NotificationType.PurchaseConfirmed,
+                    Title = "Purchase Confirmed",
+                    Message = $"Your purchase of {purchase.Quantity} {marketplaceItem.Unit} of {marketplaceItem.MaterialType} has been confirmed. Total: ${purchase.TotalAmount}",
+                    IsRead = false
+                });
 
-                string notificationMessage = dto.Status switch
+                // Notify original seller about item sold
+                await _notificationService.SendNotificationAsync(new NotificationDto
                 {
-                    PaymentStatus.Completed => $"Payment for your {marketplaceItem.MaterialType} item has been completed successfully.",
-                    PaymentStatus.Failed => $"Payment for your {marketplaceItem.MaterialType} item has failed. Please contact support.",
-                    PaymentStatus.Refunded => $"Payment for your {marketplaceItem.MaterialType} item has been refunded.",
-                    _ => $"Payment status for your {marketplaceItem.MaterialType} item has been updated to {dto.Status}."
-                };
-
-                await _notificationService.CreateNotificationAsync(
-                    marketplaceItem.UserId,
-                    notificationTitle,
-                    notificationMessage,
-                    NotificationType.PaymentReceived);
+                    UserId = marketplaceItem.UserId,
+                    Type = NotificationType.ItemSold,
+                    Title = "Item Sold",
+                    Message = $"Your {marketplaceItem.MaterialType} item has been sold. Quantity: {purchase.Quantity} {marketplaceItem.Unit}, Amount: ${purchase.TotalAmount}",
+                    IsRead = false
+                });
             }
-
-            return MapToResponseDto(purchase);
+            catch (Exception)
+            {
+                // Log notification errors but don't fail the purchase
+            }
         }
 
-        private static PurchaseResponseDto MapToResponseDto(Purchase purchase)
+        private static PurchaseResponseDto MapToResponseDto(Purchase purchase, PaymentResponseDto paymentResult = null)
         {
             return new PurchaseResponseDto
             {
@@ -161,7 +204,8 @@ namespace Application.Implementations
                     PublishedAt = purchase.MarketplaceItem.PublishedAt,
                     CreatedAt = purchase.MarketplaceItem.CreatedAt,
                     UpdatedAt = purchase.MarketplaceItem.UpdatedAt
-                } : null
+                } : null,
+                PaymentResult = paymentResult
             };
         }
     }

@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Domain.Entities;
+using Application.DTOs;
 
 namespace Application.Contracts
 {
@@ -10,5 +11,6 @@ namespace Application.Contracts
         Task<Notification> MarkAsReadAsync(Guid notificationId);
         Task<int> MarkAllAsReadAsync(int userId);
         Task<Notification> GetByIdAsync(Guid id);
+        Task<bool> SendNotificationAsync(NotificationDto notificationDto);
     }
 }

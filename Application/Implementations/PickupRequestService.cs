@@ -11,10 +11,20 @@ namespace Application.Implementations
     public class PickupRequestService : IPickupRequestService
     {
         private readonly IPickupRequestRepository _pickupRequestRepository;
+        private readonly IPaymentService _paymentService;
+        private readonly INotificationService _notificationService;
+        private readonly IMarketplaceRepository _marketplaceRepository;
 
-        public PickupRequestService(IPickupRequestRepository pickupRequestRepository)
+        public PickupRequestService(
+            IPickupRequestRepository pickupRequestRepository,
+            IPaymentService paymentService,
+            INotificationService notificationService,
+            IMarketplaceRepository marketplaceRepository)
         {
             _pickupRequestRepository = pickupRequestRepository;
+            _paymentService = paymentService;
+            _notificationService = notificationService;
+            _marketplaceRepository = marketplaceRepository;
         }
 
         public async Task<PickupRequestResponseDto> CreateRequestAsync(CreatePickupRequestDto dto, int userId)
@@ -73,21 +83,68 @@ namespace Application.Implementations
 
         public async Task<PickupRequestResponseDto> ApproveRequestAsync(Guid requestId, int adminId, ApprovePickupRequestDto dto)
         {
-            var request = await _pickupRequestRepository.GetByIdAsync(requestId);
-            if (request == null)
-                throw new ArgumentException("Pickup request not found");
+            try
+            {
+                var request = await _pickupRequestRepository.GetByIdAsync(requestId);
+                if (request == null)
+                    throw new ArgumentException("Pickup request not found");
 
-            if (request.Status != PickupStatus.Pending)
-                throw new InvalidOperationException("Request is not in pending status");
+                if (request.Status != PickupStatus.Pending)
+                    throw new InvalidOperationException("Request is not in pending status");
 
-            request.Status = PickupStatus.Approved;
-            request.AdminId = adminId;
-            request.AdminNotes = dto.Notes;
-            request.ApprovedDate = DateTime.UtcNow;
+                // Approve the pickup request
+                request.Status = PickupStatus.Approved;
+                request.AdminId = adminId;
+                request.AdminNotes = dto.Notes;
+                request.ApprovedDate = DateTime.UtcNow;
 
-            var updatedRequest = await _pickupRequestRepository.UpdateAsync(request);
+                var updatedRequest = await _pickupRequestRepository.UpdateAsync(request);
 
-            return MapToResponseDto(updatedRequest);
+                // Process payment to user automatically
+                var paymentResult = await _paymentService.ProcessPickupPaymentAsync(requestId, request.TotalEstimatedPrice);
+
+                if (!paymentResult.IsSuccess)
+                {
+                    // Rollback approval if payment fails
+                    request.Status = PickupStatus.Pending;
+                    request.AdminId = null;
+                    request.AdminNotes = null;
+                    request.ApprovedDate = null;
+                    await _pickupRequestRepository.UpdateAsync(request);
+                    throw new InvalidOperationException($"Payment failed: {paymentResult.Message}");
+                }
+
+                // Create marketplace item
+                var marketplaceItem = new MarketplaceItem
+                {
+                    Id = Guid.NewGuid(),
+                    PickupRequestId = request.Id,
+                    UserId = request.UserId,
+                    MaterialType = request.MaterialType,
+                    Quantity = request.Quantity,
+                    Unit = request.Unit,
+                    PricePerUnit = request.ProposedPricePerUnit,
+                    Description = request.Description,
+                    ImageUrls = request.ImageUrls,
+                    IsAvailable = true,
+                    PublishedAt = DateTime.UtcNow
+                };
+
+                await _marketplaceRepository.CreateAsync(marketplaceItem);
+
+                // Update pickup request status to published
+                request.Status = PickupStatus.Published;
+                await _pickupRequestRepository.UpdateAsync(request);
+
+                // Send notifications
+                await SendApprovalNotificationsAsync(updatedRequest, paymentResult);
+
+                return MapToResponseDto(updatedRequest);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public async Task<PickupRequestResponseDto> RejectRequestAsync(Guid requestId, int adminId, RejectPickupRequestDto dto)
@@ -115,6 +172,36 @@ namespace Application.Implementations
                 throw new ArgumentException("Pickup request not found");
 
             return MapToResponseDto(request);
+        }
+
+        private async Task SendApprovalNotificationsAsync(PickupRequest request, PaymentResponseDto paymentResult)
+        {
+            try
+            {
+                // Notify user about pickup approval and payment
+                await _notificationService.SendNotificationAsync(new NotificationDto
+                {
+                    UserId = request.UserId,
+                    Type = NotificationType.PickupApproved,
+                    Title = "Pickup Request Approved",
+                    Message = $"Your pickup request for {request.Quantity} {request.Unit} of {request.MaterialType} has been approved. Payment of ${request.TotalEstimatedPrice} has been processed.",
+                    IsRead = false
+                });
+
+                // Notify user about marketplace item creation
+                await _notificationService.SendNotificationAsync(new NotificationDto
+                {
+                    UserId = request.UserId,
+                    Type = NotificationType.PaymentReceived,
+                    Title = "Payment Received",
+                    Message = $"You have received ${request.TotalEstimatedPrice} for your {request.MaterialType} pickup. Your item is now available in the marketplace.",
+                    IsRead = false
+                });
+            }
+            catch (Exception)
+            {
+                // Log notification errors but don't fail the approval process
+            }
         }
 
         private static PickupRequestResponseDto MapToResponseDto(PickupRequest request)

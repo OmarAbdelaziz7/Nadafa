@@ -38,6 +38,7 @@ namespace Application.DTOs
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public MarketplaceItemDto MarketplaceItem { get; set; }
+        public PaymentResponseDto PaymentResult { get; set; }
     }
 
     public class PurchaseDto

@@ -269,6 +269,12 @@ __pycache__/
 
 # Application configuration files
 *appsettings.json*
+*appsettings.Development.json*
+*.env
+*.env.local
+*.env.development.local
+*.env.test.local
+*.env.production.local
 
 TenderApp.Infrastructure/Utilities/DbConnection.cs
 TenderApp.Presentation/wwwroot/*

@@ -63,12 +63,12 @@ The `.env` file contains sensitive credentials. Update `appsettings.json` with t
 ```json
 {
   "StripeSettings": {
-    "SecretKey": "sk_test_51R5nR3Ho1FFIeLqZ2ht1OnmtTrjlmGyRJmbRA053o91fHpqMlp24pFnB0bbR7cXuMgjOTmO5DzejqR5L79v5Vy7V00WtBoFk2P",
-    "PublicKey": "pk_test_51R5nR3Ho1FFIeLqZ2MqYVYAfYcDBEc8f6qqpYkbaPFh53hvBEVlvpHYgTCVeQNgXBxP8SuCPpy2m1tWDaUFQi3r400EJhnf3bo"
+    "SecretKey": "",
+    "PublicKey": ""
   },
   "SendGridSettings": {
-    "ApiKey": "SG.jxI4CJSHQail953UGe_i9Q.482EbJQjjFQkksPCvFHLFBo-84YeC89GB59iF_DHHu8",
-    "FromEmail": "islamhk1234@gmail.com"
+    "ApiKey": "",
+    "FromEmail": ""
   }
 }
 ```
@@ -542,11 +542,144 @@ Nadafa/
 - **Role-Based Access**: Different permissions for Users, Admins, and Factories
 - **Input Validation**: Data annotations for request validation
 
+## 💳 Payment Integration Testing
+
+### Stripe Test Mode Setup
+
+The platform uses Stripe in test mode with hardcoded test card details:
+
+- **Card Number**: 4242424242424242
+- **Expiry Month**: 12
+- **Expiry Year**: 2025
+- **CVC**: 123
+
+### Manual Testing Guide
+
+#### 1. Test Pickup Payment Flow
+
+```bash
+# 1. Register a user
+curl -X POST "https://localhost:5001/api/auth/register/user" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Test User",
+    "email": "user@test.com",
+    "address": "123 Test St",
+    "age": 25,
+    "password": "Test123!"
+  }'
+
+# 2. Login as user and get token
+curl -X POST "https://localhost:5001/api/auth/login" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "user@test.com",
+    "password": "Test123!"
+  }'
+
+# 3. Create pickup request
+curl -X POST "https://localhost:5001/api/pickup-requests" \
+  -H "Authorization: Bearer {user_token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "materialType": 1,
+    "quantity": 10.5,
+    "unit": 1,
+    "proposedPricePerUnit": 15.00,
+    "description": "Paper recycling pickup"
+  }'
+
+# 4. Login as admin and approve request (triggers automatic payment)
+curl -X POST "https://localhost:5001/api/pickup-requests/{requestId}/approve" \
+  -H "Authorization: Bearer {admin_token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "notes": "Approved for pickup"
+  }'
+```
+
+#### 2. Test Factory Purchase Flow
+
+```bash
+# 1. Register a factory
+curl -X POST "https://localhost:5001/api/auth/register/factory" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Test Factory",
+    "email": "factory@test.com",
+    "address": "456 Factory Ave",
+    "password": "Test123!",
+    "phoneNumber": "1234567890",
+    "businessLicense": "BL123456"
+  }'
+
+# 2. Login as factory and create purchase
+curl -X POST "https://localhost:5001/api/purchases" \
+  -H "Authorization: Bearer {factory_token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "marketplaceItemId": "{itemId}",
+    "quantity": 5.0
+  }'
+
+# 3. Process payment (direct payment to seller)
+curl -X POST "https://localhost:5001/api/payment/purchase/{purchaseId}" \
+  -H "Authorization: Bearer {factory_token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "factoryId": 123,
+    "amount": 75.00,
+    "currency": "usd"
+  }'
+```
+
+#### 3. Test Direct Payment
+
+```bash
+# Test payment with hardcoded card
+curl -X POST "https://localhost:5001/api/payment/test" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "amount": 25.00,
+    "currency": "usd",
+    "description": "Test payment",
+    "customerEmail": "test@example.com"
+  }'
+```
+
+#### 4. Payment Status Check
+
+```bash
+# Check payment status
+curl -X GET "https://localhost:5001/api/payment/status/{paymentIntentId}" \
+  -H "Authorization: Bearer {token}"
+```
+
+### Postman Collection
+
+Import the following environment variables into Postman:
+
+```json
+{
+  "baseUrl": "https://localhost:5001",
+  "userToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "adminToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "factoryToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+### Payment Workflow Notes
+
+- **Admin Approval**: When admin approves a pickup request, the user is automatically paid via Stripe
+- **Factory Purchase**: When factory buys items, payment goes directly to the seller (no admin involvement)
+- **Test Mode**: All payments use test Stripe keys and hardcoded test card details
+- **No Refunds**: Refund functionality is not implemented as requested
+
 ## 🚀 Next Steps
 
 1. **Implement Pickup Request Management**
 2. **Add Admin Dashboard Endpoints**
-3. **Integrate Stripe Payment Processing**
+3. **Integrate Stripe Payment Processing** ✅ **COMPLETED**
 4. **Add SendGrid Email Notifications**
 5. **Implement Marketplace Browsing**
 6. **Add Factory Verification System**
