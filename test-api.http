@@ -100,6 +100,17 @@ Content-Type: application/json
   "businessLicense": "GRC789012"
 }
 
+### 12. Delete Account (Requires authentication)
+DELETE {{baseUrl}}/api/auth/account
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "password": "SecurePass123!",
+  "confirmPassword": "SecurePass123!",
+  "confirmDeletion": true
+}
+
 ### Variables (set these in your HTTP client)
 # @baseUrl = https://localhost:5001
 # @authToken = your-jwt-token-here

@@ -21,7 +21,8 @@ namespace Domain.Entities
         [Range(0.01, double.MaxValue)]
         public decimal PricePerUnit { get; set; }
 
-        public decimal TotalAmount => Quantity * PricePerUnit;
+        [Required]
+        public decimal TotalAmount { get; set; }
 
         [Required]
         [StringLength(100)]
@@ -46,6 +47,12 @@ namespace Domain.Entities
         public void UpdateTimestamp()
         {
             UpdatedAt = DateTime.UtcNow;
+        }
+
+        // Helper method to calculate and set total amount
+        public void CalculateTotalAmount()
+        {
+            TotalAmount = Quantity * PricePerUnit;
         }
     }
 }

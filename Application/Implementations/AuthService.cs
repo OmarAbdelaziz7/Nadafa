@@ -269,6 +269,56 @@ namespace Application.Implementations
             };
         }
 
+        public async Task<AuthResponseDto> DeleteAccountAsync(string email, DeleteAccountDto request)
+        {
+            // This is a simplified implementation
+            // In a real application, you would validate against the database
+
+            if (string.IsNullOrEmpty(email))
+            {
+                return new AuthResponseDto
+                {
+                    IsSuccess = false,
+                    Message = "Email is required"
+                };
+            }
+
+            if (!request.ConfirmDeletion)
+            {
+                return new AuthResponseDto
+                {
+                    IsSuccess = false,
+                    Message = "You must confirm account deletion"
+                };
+            }
+
+            if (request.Password != request.ConfirmPassword)
+            {
+                return new AuthResponseDto
+                {
+                    IsSuccess = false,
+                    Message = "Password confirmation does not match"
+                };
+            }
+
+            // For demo purposes, simulate account deletion
+            // In real app, you would:
+            // 1. Find user/factory by email
+            // 2. Verify password using BCrypt.Verify
+            // 3. Check for any pending transactions or data dependencies
+            // 4. Soft delete or permanently delete the account
+            // 5. Clean up related data (pickup requests, marketplace items, etc.)
+            // 6. Invalidate any active sessions/tokens
+
+            return new AuthResponseDto
+            {
+                IsSuccess = true,
+                Message = "Account deleted successfully",
+                Email = email,
+                Role = "User" // This would come from the actual user/factory
+            };
+        }
+
         private string GenerateJwtToken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();

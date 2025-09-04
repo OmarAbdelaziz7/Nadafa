@@ -198,5 +198,30 @@ namespace Presentation.Controllers
 
             return BadRequest(result);
         }
+
+        [HttpDelete("account")]
+        [Authorize]
+        public async Task<ActionResult<AuthResponseDto>> DeleteAccount([FromBody] DeleteAccountDto request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var email = User.FindFirst(ClaimTypes.Email)?.Value;
+            if (string.IsNullOrEmpty(email))
+            {
+                return BadRequest("User email not found in token");
+            }
+
+            var result = await _authService.DeleteAccountAsync(email, request);
+
+            if (result.IsSuccess)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result);
+        }
     }
 }

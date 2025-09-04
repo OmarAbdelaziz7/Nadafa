@@ -11,11 +11,11 @@ namespace Domain.Entities
         public int UserId { get; set; }
 
         [Required]
-        [StringLength(100)]
+        [StringLength(200)]
         public string Title { get; set; }
 
         [Required]
-        [StringLength(500)]
+        [StringLength(1000)]
         public string Message { get; set; }
 
         [Required]

@@ -132,4 +132,17 @@ namespace Application.DTOs
         [StringLength(50)]
         public string BusinessLicense { get; set; }
     }
+
+    public class DeleteAccountDto
+    {
+        [Required]
+        public string Password { get; set; }
+
+        [Required]
+        [Compare("Password", ErrorMessage = "Password confirmation must match")]
+        public string ConfirmPassword { get; set; }
+
+        [Required]
+        public bool ConfirmDeletion { get; set; }
+    }
 }

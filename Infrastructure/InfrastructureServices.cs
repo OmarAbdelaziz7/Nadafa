@@ -21,6 +21,8 @@ namespace Infrastructure
             // Register Repositories
             services.AddScoped<IPickupRequestRepository, PickupRequestRepository>();
             services.AddScoped<IMarketplaceRepository, MarketplaceRepository>();
+            services.AddScoped<IPurchaseRepository, PurchaseRepository>();
+            services.AddScoped<INotificationRepository, NotificationRepository>();
 
             return services;
         }

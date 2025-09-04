@@ -17,6 +17,12 @@ namespace Application
             // Marketplace Services
             services.AddScoped<IMarketplaceService, MarketplaceService>();
 
+            // Purchase Services
+            services.AddScoped<IPurchaseService, PurchaseService>();
+
+            // Notification Services
+            services.AddScoped<INotificationService, NotificationService>();
+
             return services;
         }
     }

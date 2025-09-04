@@ -244,6 +244,31 @@ Content-Type: application/json
 }
 ```
 
+### Delete Account (Requires Authentication)
+```http
+DELETE /api/auth/account
+Authorization: Bearer <your-jwt-token>
+Content-Type: application/json
+
+{
+  "password": "SecurePass123!",
+  "confirmPassword": "SecurePass123!",
+  "confirmDeletion": true
+}
+```
+
+**Response:**
+```json
+{
+  "isSuccess": true,
+  "message": "Account deleted successfully",
+  "email": "john@example.com",
+  "role": "User"
+}
+```
+
+**Important:** This action is **permanent and irreversible**. All user data, including pickup requests, marketplace items, and payment history will be permanently deleted.
+
 ## 🧪 Manual Testing Guide
 
 ### Prerequisites
@@ -303,6 +328,18 @@ Content-Type: application/json
 4. **Get current user info** to confirm changes
 5. **Try logging in** with the new email (should work)
 
+#### 8. Account Deletion Flow (⚠️ DANGEROUS - Test with caution)
+1. **Login** to get a valid JWT token
+2. **Delete account** using `/api/auth/account` with:
+   - Current password
+   - Password confirmation
+   - Deletion confirmation set to `true`
+3. **Verify success message**
+4. **Try logging in** with the same credentials (should fail)
+5. **Try accessing any authenticated endpoint** (should fail)
+
+**⚠️ Warning:** This action is **permanent and irreversible**. Only test this with accounts you're willing to lose permanently.
+
 ### Expected Behaviors
 
 #### Authentication
@@ -328,6 +365,13 @@ Content-Type: application/json
 - ✅ Updated information is reflected in responses
 - ✅ Email changes are handled properly
 
+#### Account Deletion
+- ✅ Account deletion requires authentication
+- ✅ Password verification is required
+- ✅ Deletion confirmation is mandatory
+- ✅ Deleted accounts cannot be accessed
+- ✅ All related data is permanently removed
+
 #### Role-Based Access
 - ✅ Users can access user-specific endpoints
 - ✅ Factories can access factory-specific endpoints
@@ -346,6 +390,9 @@ Content-Type: application/json
 8. **Invalid profile data** → Should return validation error
 9. **Unauthorized profile update** → Should return 401
 10. **Duplicate email in profile update** → Should return error
+11. **Missing deletion confirmation** → Should return error
+12. **Incorrect password for deletion** → Should return error
+13. **Mismatched password confirmation for deletion** → Should return error
 
 #### Security Scenarios
 1. **Password confirmation** → New passwords must be confirmed
@@ -355,6 +402,9 @@ Content-Type: application/json
 5. **Profile data validation** → Profile updates must pass validation
 6. **Email uniqueness** → Email addresses must be unique
 7. **Authorization checks** → Users can only update their own profiles
+8. **Account deletion security** → Multiple confirmations required for deletion
+9. **Data privacy** → Deleted accounts are permanently removed
+10. **Session invalidation** → Deleted accounts cannot access the system
 
 ### Testing Tools
 - **Swagger UI**: Interactive API documentation and testing

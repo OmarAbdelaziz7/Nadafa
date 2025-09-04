@@ -13,5 +13,6 @@ namespace Application.Contracts
         Task<SignOutResponseDto> SignOutAsync(string token);
         Task<AuthResponseDto> UpdateUserProfileAsync(string currentEmail, UpdateUserProfileDto request);
         Task<AuthResponseDto> UpdateFactoryProfileAsync(string currentEmail, UpdateFactoryProfileDto request);
+        Task<AuthResponseDto> DeleteAccountAsync(string email, DeleteAccountDto request);
     }
 }
