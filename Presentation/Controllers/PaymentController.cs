@@ -10,10 +10,7 @@ using Presentation.Base;
 
 namespace Presentation.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    [Authorize]
-    public class PaymentController : AppControllerBase
+    public class PaymentController : ApiControllerBase
     {
         private readonly IPaymentService _paymentService;
         private readonly ILogger<PaymentController> _logger;
@@ -28,13 +25,18 @@ namespace Presentation.Controllers
         /// Process payment for approved pickup request (Admin pays user)
         /// </summary>
         [HttpPost("pickup/{pickupRequestId}")]
-        [Authorize(Roles = "Admin")]
+        [AuthorizeRoles("Admin")]
         public async Task<ActionResult<PaymentResponseDto>> ProcessPickupPayment(
             Guid pickupRequestId,
             [FromBody] PickupPaymentDto paymentDto)
         {
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
                 _logger.LogInformation($"Processing pickup payment for request {pickupRequestId}");
 
                 var result = await _paymentService.ProcessPickupPaymentAsync(pickupRequestId, paymentDto.Amount);
@@ -54,7 +56,7 @@ namespace Presentation.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error processing pickup payment for request {pickupRequestId}");
-                return StatusCode(500, new { error = "An error occurred while processing the payment" });
+                return HandleException(ex, "An error occurred while processing the payment");
             }
         }
 
@@ -62,13 +64,18 @@ namespace Presentation.Controllers
         /// Process payment for factory purchasing marketplace items
         /// </summary>
         [HttpPost("purchase/{purchaseId}")]
-        [Authorize(Roles = "Factory")]
+        [AuthorizeRoles("Factory")]
         public async Task<ActionResult<PaymentResponseDto>> ProcessPurchasePayment(
             Guid purchaseId,
             [FromBody] PurchasePaymentDto paymentDto)
         {
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
                 _logger.LogInformation($"Processing purchase payment for purchase {purchaseId}");
 
                 var result = await _paymentService.ProcessPurchasePaymentAsync(purchaseId, paymentDto.FactoryId);
@@ -88,7 +95,7 @@ namespace Presentation.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error processing purchase payment for purchase {purchaseId}");
-                return StatusCode(500, new { error = "An error occurred while processing the payment" });
+                return HandleException(ex, "An error occurred while processing the payment");
             }
         }
 
@@ -100,6 +107,11 @@ namespace Presentation.Controllers
         {
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
                 _logger.LogInformation($"Creating payment intent for amount {request.Amount} {request.Currency}");
 
                 var result = await _paymentService.CreatePaymentIntentAsync(
@@ -113,7 +125,7 @@ namespace Presentation.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error creating payment intent");
-                return StatusCode(500, new { error = "An error occurred while creating the payment intent" });
+                return HandleException(ex, "An error occurred while creating the payment intent");
             }
         }
 
@@ -125,6 +137,11 @@ namespace Presentation.Controllers
         {
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
                 _logger.LogInformation($"Confirming payment {request.PaymentIntentId}");
 
                 var result = await _paymentService.ConfirmPaymentAsync(request.PaymentIntentId);
@@ -134,7 +151,7 @@ namespace Presentation.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error confirming payment {request.PaymentIntentId}");
-                return StatusCode(500, new { error = "An error occurred while confirming the payment" });
+                return HandleException(ex, "An error occurred while confirming the payment");
             }
         }
 
@@ -147,6 +164,11 @@ namespace Presentation.Controllers
         {
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
                 _logger.LogInformation($"Processing test payment for amount {paymentDto.Amount}");
 
                 var result = await _paymentService.ProcessTestPaymentAsync(paymentDto);
@@ -156,7 +178,7 @@ namespace Presentation.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error processing test payment");
-                return StatusCode(500, new { error = "An error occurred while processing the test payment" });
+                return HandleException(ex, "An error occurred while processing the test payment");
             }
         }
 
@@ -168,6 +190,11 @@ namespace Presentation.Controllers
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(paymentIntentId))
+                {
+                    return BadRequest(new { error = "Payment intent ID is required" });
+                }
+
                 _logger.LogInformation($"Getting payment status for {paymentIntentId}");
 
                 var result = await _paymentService.GetPaymentStatusAsync(paymentIntentId);
@@ -177,7 +204,7 @@ namespace Presentation.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error getting payment status for {paymentIntentId}");
-                return StatusCode(500, new { error = "An error occurred while getting the payment status" });
+                return HandleException(ex, "An error occurred while getting the payment status");
             }
         }
 

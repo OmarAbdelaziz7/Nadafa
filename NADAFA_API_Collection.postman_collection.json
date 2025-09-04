@@ -1,0 +1,1525 @@
+{
+    "info": {
+        "name": "NADAFA Recycling Platform API",
+        "description": "Complete API collection for the NADAFA recycling platform with authentication, role-based access, and comprehensive testing scenarios.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+        "version": "1.0.0"
+    },
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "https://api.nadafa.com/v1",
+            "type": "string"
+        },
+        {
+            "key": "user_token",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "admin_token",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "factory_token",
+            "value": "",
+            "type": "string"
+        }
+    ],
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "token",
+                "value": "{{user_token}}",
+                "type": "string"
+            }
+        ]
+    },
+    "item": [
+        {
+            "name": "Authentication",
+            "item": [
+                {
+                    "name": "User Registration",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"test@example.com\",\n  \"password\": \"TestPassword123!\",\n  \"phone\": \"+1234567890\",\n  \"address\": \"123 Test St, Test City\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/auth/register/user",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "register",
+                                "user"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Factory Registration",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Green Recycling Factory\",\n  \"email\": \"factory@example.com\",\n  \"password\": \"TestPassword123!\",\n  \"phone\": \"+1234567890\",\n  \"address\": \"456 Industrial Ave, Test City\",\n  \"businessLicense\": \"LIC123456\",\n  \"capacity\": 1000\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/auth/register/factory",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "register",
+                                "factory"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Login",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"TestPassword123!\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/auth/login",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "login"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Current User",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{user_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/auth/me",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "me"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Validate Token",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{user_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/auth/validate-token",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "validate-token"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Pickup Requests",
+            "item": [
+                {
+                    "name": "Create Pickup Request",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{user_token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"materialType\": \"Plastic\",\n  \"quantity\": 25.0,\n  \"unit\": \"Kg\",\n  \"proposedPricePerUnit\": 2.00,\n  \"description\": \"Clean plastic bottles and containers\",\n  \"imageUrls\": [\n    \"https://example.com/image1.jpg\",\n    \"https://example.com/image2.jpg\"\n  ]\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/pickup-request",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "pickup-request"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get User Requests",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{user_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/pickup-request/my-requests?page=1&pageSize=10",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "pickup-request",
+                                "my-requests"
+                            ],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "pageSize",
+                                    "value": "10"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Pending Requests (Admin)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/pickup-request/pending?page=1&pageSize=10",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "pickup-request",
+                                "pending"
+                            ],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "pageSize",
+                                    "value": "10"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Request Details",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{user_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/pickup-request/{request-id}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "pickup-request",
+                                "{request-id}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Approve Request (Admin)",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"approvedPricePerUnit\": 2.00,\n  \"notes\": \"Request approved after inspection\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/pickup-request/{request-id}/approve",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "pickup-request",
+                                "{request-id}",
+                                "approve"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Reject Request (Admin)",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"reason\": \"Materials not properly sorted\",\n  \"notes\": \"Please separate different types of plastic\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/pickup-request/{request-id}/reject",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "pickup-request",
+                                "{request-id}",
+                                "reject"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Marketplace",
+            "item": [
+                {
+                    "name": "Get Available Items",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{user_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/marketplace?materialType=Plastic&page=1&pageSize=10",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "marketplace"
+                            ],
+                            "query": [
+                                {
+                                    "key": "materialType",
+                                    "value": "Plastic"
+                                },
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "pageSize",
+                                    "value": "10"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Item Details",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{user_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/marketplace/{item-id}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "marketplace",
+                                "{item-id}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Search Items",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{user_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/marketplace/search?searchTerm=plastic&page=1&pageSize=10",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "marketplace",
+                                "search"
+                            ],
+                            "query": [
+                                {
+                                    "key": "searchTerm",
+                                    "value": "plastic"
+                                },
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "pageSize",
+                                    "value": "10"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Purchase Item (Factory)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{factory_token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"marketplaceItemId\": \"{item-id}\",\n  \"quantity\": 20.0,\n  \"pricePerUnit\": 2.00,\n  \"stripePaymentIntentId\": \"pi_test123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/marketplace/{item-id}/purchase",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "marketplace",
+                                "{item-id}",
+                                "purchase"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get My Sales (User)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{user_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/marketplace/my-sales?page=1&pageSize=10",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "marketplace",
+                                "my-sales"
+                            ],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "pageSize",
+                                    "value": "10"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Purchases",
+            "item": [
+                {
+                    "name": "Get Factory Purchases",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{factory_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/purchase/my-purchases?page=1&pageSize=10",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "purchase",
+                                "my-purchases"
+                            ],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "pageSize",
+                                    "value": "10"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Purchase Details",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{factory_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/purchase/{purchase-id}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "purchase",
+                                "{purchase-id}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Confirm Payment (Factory)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{factory_token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"status\": \"Completed\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/purchase/{purchase-id}/confirm-payment",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "purchase",
+                                "{purchase-id}",
+                                "confirm-payment"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Admin",
+            "item": [
+                {
+                    "name": "Get Dashboard Stats",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/admin/dashboard",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "dashboard"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get All Requests",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/admin/requests?status=Pending&materialType=Plastic&page=1&pageSize=10",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "requests"
+                            ],
+                            "query": [
+                                {
+                                    "key": "status",
+                                    "value": "Pending"
+                                },
+                                {
+                                    "key": "materialType",
+                                    "value": "Plastic"
+                                },
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "pageSize",
+                                    "value": "10"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Payment History",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/admin/payments?fromDate=2024-01-01&toDate=2024-01-31&page=1&pageSize=10",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "payments"
+                            ],
+                            "query": [
+                                {
+                                    "key": "fromDate",
+                                    "value": "2024-01-01"
+                                },
+                                {
+                                    "key": "toDate",
+                                    "value": "2024-01-31"
+                                },
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "pageSize",
+                                    "value": "10"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Marketplace Management",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/admin/marketplace?materialType=Plastic&isAvailable=true&page=1&pageSize=10",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "marketplace"
+                            ],
+                            "query": [
+                                {
+                                    "key": "materialType",
+                                    "value": "Plastic"
+                                },
+                                {
+                                    "key": "isAvailable",
+                                    "value": "true"
+                                },
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "pageSize",
+                                    "value": "10"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Publish to Marketplace",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"pickupRequestId\": \"{request-id}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/admin/publish-to-marketplace",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "publish-to-marketplace"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get System Stats",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/admin/system-stats",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "system-stats"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Export Data",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/admin/export?dataType=pickup-requests&format=csv",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "export"
+                            ],
+                            "query": [
+                                {
+                                    "key": "dataType",
+                                    "value": "pickup-requests"
+                                },
+                                {
+                                    "key": "format",
+                                    "value": "csv"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Notifications",
+            "item": [
+                {
+                    "name": "Get Notifications",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{user_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/notification?unreadOnly=false&page=1&pageSize=10",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "notification"
+                            ],
+                            "query": [
+                                {
+                                    "key": "unreadOnly",
+                                    "value": "false"
+                                },
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "pageSize",
+                                    "value": "10"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Unread Notifications",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{user_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/notification?unreadOnly=true&page=1&pageSize=10",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "notification"
+                            ],
+                            "query": [
+                                {
+                                    "key": "unreadOnly",
+                                    "value": "true"
+                                },
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "pageSize",
+                                    "value": "10"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Mark as Read",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{user_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/notification/{notification-id}/read",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "notification",
+                                "{notification-id}",
+                                "read"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Mark All as Read",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{user_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/notification/mark-all-read",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "notification",
+                                "mark-all-read"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Unread Count",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{user_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/notification/unread-count",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "notification",
+                                "unread-count"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Notification Stats",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{user_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/notification/stats",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "notification",
+                                "stats"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Payments",
+            "item": [
+                {
+                    "name": "Process Pickup Payment (Admin)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"amount\": 50.00\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/payment/pickup/{request-id}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "payment",
+                                "pickup",
+                                "{request-id}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Process Purchase Payment (Factory)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{factory_token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"factoryId\": 2\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/payment/purchase/{purchase-id}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "payment",
+                                "purchase",
+                                "{purchase-id}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Payment Intent",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{user_token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"amount\": 100.00,\n  \"currency\": \"usd\",\n  \"description\": \"Payment for recycling materials\",\n  \"customerEmail\": \"customer@example.com\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/payment/create-intent",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "payment",
+                                "create-intent"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Confirm Payment",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{user_token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"paymentIntentId\": \"pi_test123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/payment/confirm",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "payment",
+                                "confirm"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Payment Status",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{user_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/payment/status/{payment-intent-id}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "payment",
+                                "status",
+                                "{payment-intent-id}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Process Test Payment",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"amount\": 50.00,\n  \"currency\": \"usd\",\n  \"cardNumber\": \"4242424242424242\",\n  \"expiryMonth\": \"12\",\n  \"expiryYear\": \"2025\",\n  \"cvc\": \"123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/payment/test",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "payment",
+                                "test"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Testing Scenarios",
+            "item": [
+                {
+                    "name": "Complete Workflow Test",
+                    "item": [
+                        {
+                            "name": "1. Register User",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"name\": \"Workflow Test User\",\n  \"email\": \"workflow@example.com\",\n  \"password\": \"TestPassword123!\",\n  \"phone\": \"+1234567890\",\n  \"address\": \"123 Workflow St, Test City\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/api/auth/register/user",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "auth",
+                                        "register",
+                                        "user"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "2. Login User",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"email\": \"workflow@example.com\",\n  \"password\": \"TestPassword123!\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/api/auth/login",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "auth",
+                                        "login"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "3. Create Pickup Request",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    },
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{user_token}}"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"materialType\": \"Plastic\",\n  \"quantity\": 30.0,\n  \"unit\": \"Kg\",\n  \"proposedPricePerUnit\": 2.50,\n  \"description\": \"Workflow test materials\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/api/pickup-request",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "pickup-request"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "4. Admin Approve Request",
+                            "request": {
+                                "method": "PUT",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    },
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{admin_token}}"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"approvedPricePerUnit\": 2.50,\n  \"notes\": \"Workflow test approval\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/api/pickup-request/{request-id}/approve",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "pickup-request",
+                                        "{request-id}",
+                                        "approve"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "5. Process Payment",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    },
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{admin_token}}"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"amount\": 75.00\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/api/payment/pickup/{request-id}",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "payment",
+                                        "pickup",
+                                        "{request-id}"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "6. Factory Purchase",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    },
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{factory_token}}"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"marketplaceItemId\": \"{item-id}\",\n  \"quantity\": 25.0,\n  \"pricePerUnit\": 2.50,\n  \"stripePaymentIntentId\": \"pi_workflow_test\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/api/marketplace/{item-id}/purchase",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "marketplace",
+                                        "{item-id}",
+                                        "purchase"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        }
+                    ]
+                },
+                {
+                    "name": "Role-Based Access Test",
+                    "item": [
+                        {
+                            "name": "User Access Test",
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{user_token}}"
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{base_url}}/api/pickup-request/my-requests",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "pickup-request",
+                                        "my-requests"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Admin Access Test",
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{admin_token}}"
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/dashboard",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "dashboard"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Factory Access Test",
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{factory_token}}"
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{base_url}}/api/purchase/my-purchases",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "purchase",
+                                        "my-purchases"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -5,12 +5,11 @@ using Application.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using Presentation.Base;
 
 namespace Presentation.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class AuthController : ControllerBase
+    public class AuthController : ApiControllerBase
     {
         private readonly IAuthService _authService;
 
@@ -19,209 +18,285 @@ namespace Presentation.Controllers
             _authService = authService;
         }
 
+        /// <summary>
+        /// Register a new user
+        /// </summary>
         [HttpPost("register/user")]
+        [AllowAnonymous]
         public async Task<ActionResult<AuthResponseDto>> RegisterUser([FromBody] UserRegistrationDto request)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var result = await _authService.RegisterUserAsync(request);
+
+                if (result.IsSuccess)
+                {
+                    return Ok(result);
+                }
+
+                return BadRequest(result);
             }
-
-            var result = await _authService.RegisterUserAsync(request);
-
-            if (result.IsSuccess)
+            catch (Exception ex)
             {
-                return Ok(result);
+                return HandleException(ex);
             }
-
-            return BadRequest(result);
         }
 
+        /// <summary>
+        /// Register a new factory
+        /// </summary>
         [HttpPost("register/factory")]
+        [AllowAnonymous]
         public async Task<ActionResult<AuthResponseDto>> RegisterFactory([FromBody] FactoryRegistrationDto request)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var result = await _authService.RegisterFactoryAsync(request);
+
+                if (result.IsSuccess)
+                {
+                    return Ok(result);
+                }
+
+                return BadRequest(result);
             }
-
-            var result = await _authService.RegisterFactoryAsync(request);
-
-            if (result.IsSuccess)
+            catch (Exception ex)
             {
-                return Ok(result);
+                return HandleException(ex);
             }
-
-            return BadRequest(result);
         }
 
+        /// <summary>
+        /// Login user or factory
+        /// </summary>
         [HttpPost("login")]
+        [AllowAnonymous]
         public async Task<ActionResult<AuthResponseDto>> Login([FromBody] LoginDto request)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var result = await _authService.LoginAsync(request);
+
+                if (result.IsSuccess)
+                {
+                    return Ok(result);
+                }
+
+                return Unauthorized(result);
             }
-
-            var result = await _authService.LoginAsync(request);
-
-            if (result.IsSuccess)
+            catch (Exception ex)
             {
-                return Ok(result);
+                return HandleException(ex);
             }
-
-            return Unauthorized(result);
         }
 
+        /// <summary>
+        /// Validate JWT token
+        /// </summary>
         [HttpPost("validate-token")]
-        [Authorize]
         public async Task<ActionResult<bool>> ValidateToken()
         {
-            var token = Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
-
-            if (string.IsNullOrEmpty(token))
+            try
             {
-                return BadRequest("Token is required");
-            }
+                var token = Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
 
-            var isValid = await _authService.ValidateTokenAsync(token);
-            return Ok(isValid);
+                if (string.IsNullOrEmpty(token))
+                {
+                    return BadRequest("Token is required");
+                }
+
+                var isValid = await _authService.ValidateTokenAsync(token);
+                return Ok(isValid);
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
+            }
         }
 
+        /// <summary>
+        /// Get current user information
+        /// </summary>
         [HttpGet("me")]
-        [Authorize]
         public ActionResult<object> GetCurrentUser()
         {
-            var claims = User.Claims.Select(c => new { c.Type, c.Value }).ToList();
-            return Ok(new
+            try
             {
-                UserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value,
-                Email = User.FindFirst(ClaimTypes.Email)?.Value,
-                Name = User.FindFirst(ClaimTypes.Name)?.Value,
-                Role = User.FindFirst(ClaimTypes.Role)?.Value,
-                Claims = claims
-            });
+                var claims = User.Claims.Select(c => new { c.Type, c.Value }).ToList();
+                return Ok(new
+                {
+                    UserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value,
+                    Email = User.FindFirst(ClaimTypes.Email)?.Value,
+                    Name = User.FindFirst(ClaimTypes.Name)?.Value,
+                    Role = User.FindFirst(ClaimTypes.Role)?.Value,
+                    Claims = claims
+                });
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
+            }
         }
 
+        /// <summary>
+        /// Change user password
+        /// </summary>
         [HttpPost("change-password")]
-        [Authorize]
         public async Task<ActionResult<AuthResponseDto>> ChangePassword([FromBody] ChangePasswordDto request)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
-            }
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
 
-            var email = User.FindFirst(ClaimTypes.Email)?.Value;
-            if (string.IsNullOrEmpty(email))
+                var email = GetCurrentUserEmail();
+                var result = await _authService.ChangePasswordAsync(email, request);
+
+                if (result.IsSuccess)
+                {
+                    return Ok(result);
+                }
+
+                return BadRequest(result);
+            }
+            catch (Exception ex)
             {
-                return BadRequest("User email not found in token");
+                return HandleException(ex);
             }
-
-            var result = await _authService.ChangePasswordAsync(email, request);
-
-            if (result.IsSuccess)
-            {
-                return Ok(result);
-            }
-
-            return BadRequest(result);
         }
 
+        /// <summary>
+        /// Sign out user
+        /// </summary>
         [HttpPost("signout")]
-        [Authorize]
         public async Task<ActionResult<SignOutResponseDto>> SignOutUser()
         {
-            var token = Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
-
-            if (string.IsNullOrEmpty(token))
+            try
             {
-                return BadRequest("Token is required");
+                var token = Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    return BadRequest("Token is required");
+                }
+
+                var result = await _authService.SignOutAsync(token);
+
+                if (result.IsSuccess)
+                {
+                    return Ok(result);
+                }
+
+                return BadRequest(result);
             }
-
-            var result = await _authService.SignOutAsync(token);
-
-            if (result.IsSuccess)
+            catch (Exception ex)
             {
-                return Ok(result);
+                return HandleException(ex);
             }
-
-            return BadRequest(result);
         }
 
+        /// <summary>
+        /// Update user profile
+        /// </summary>
         [HttpPut("profile/user")]
-        [Authorize]
         public async Task<ActionResult<AuthResponseDto>> UpdateUserProfile([FromBody] UpdateUserProfileDto request)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
-            }
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
 
-            var currentEmail = User.FindFirst(ClaimTypes.Email)?.Value;
-            if (string.IsNullOrEmpty(currentEmail))
+                var currentEmail = GetCurrentUserEmail();
+                var result = await _authService.UpdateUserProfileAsync(currentEmail, request);
+
+                if (result.IsSuccess)
+                {
+                    return Ok(result);
+                }
+
+                return BadRequest(result);
+            }
+            catch (Exception ex)
             {
-                return BadRequest("User email not found in token");
+                return HandleException(ex);
             }
-
-            var result = await _authService.UpdateUserProfileAsync(currentEmail, request);
-
-            if (result.IsSuccess)
-            {
-                return Ok(result);
-            }
-
-            return BadRequest(result);
         }
 
+        /// <summary>
+        /// Update factory profile
+        /// </summary>
         [HttpPut("profile/factory")]
-        [Authorize]
         public async Task<ActionResult<AuthResponseDto>> UpdateFactoryProfile([FromBody] UpdateFactoryProfileDto request)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
-            }
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
 
-            var currentEmail = User.FindFirst(ClaimTypes.Email)?.Value;
-            if (string.IsNullOrEmpty(currentEmail))
+                var currentEmail = GetCurrentUserEmail();
+                var result = await _authService.UpdateFactoryProfileAsync(currentEmail, request);
+
+                if (result.IsSuccess)
+                {
+                    return Ok(result);
+                }
+
+                return BadRequest(result);
+            }
+            catch (Exception ex)
             {
-                return BadRequest("Factory email not found in token");
+                return HandleException(ex);
             }
-
-            var result = await _authService.UpdateFactoryProfileAsync(currentEmail, request);
-
-            if (result.IsSuccess)
-            {
-                return Ok(result);
-            }
-
-            return BadRequest(result);
         }
 
+        /// <summary>
+        /// Delete user account
+        /// </summary>
         [HttpDelete("account")]
-        [Authorize]
         public async Task<ActionResult<AuthResponseDto>> DeleteAccount([FromBody] DeleteAccountDto request)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
-            }
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
 
-            var email = User.FindFirst(ClaimTypes.Email)?.Value;
-            if (string.IsNullOrEmpty(email))
+                var email = GetCurrentUserEmail();
+                var result = await _authService.DeleteAccountAsync(email, request);
+
+                if (result.IsSuccess)
+                {
+                    return Ok(result);
+                }
+
+                return BadRequest(result);
+            }
+            catch (Exception ex)
             {
-                return BadRequest("User email not found in token");
+                return HandleException(ex);
             }
-
-            var result = await _authService.DeleteAccountAsync(email, request);
-
-            if (result.IsSuccess)
-            {
-                return Ok(result);
-            }
-
-            return BadRequest(result);
         }
     }
 }
