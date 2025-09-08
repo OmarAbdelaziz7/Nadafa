@@ -6,40 +6,70 @@ import { RoleGuard } from './core/auth/guards/role.guard';
 // import { HouseProducts } from './features/house-products/components/house-products.component';
 export const appRoutes: Routes = [
   {
-  path: '',
-  component: AppComponent,
-  canActivate: [AuthGuard],
-},
-{
-  path: 'auth',
-  component: AppComponent,
-  // canActivate: [AuthGuard],
-  children: [
-    { path: '', redirectTo: 'login', pathMatch: 'full' },
-    { path: 'login', loadComponent: () => import('./features/auth/login/Components/login.component').then(m => m.Login) },
-    { path: 'register', loadComponent: () => import('./features/auth/register/components/register.component').then(m => m.Register) },
-    { path: 'forgot-password', loadComponent: () => import('./features/auth/forget-password/components/forget-password.component').then(m => m.ForgetPassword) },
-    { path: 'verify-email', loadComponent: () => import('./features/auth/verify-email/components/verify-email.component').then(m => m.VerifyEmail) },
-    { path: '', loadComponent: () => import('./app.component').then(m => m.AppComponent) },
-  //     {
-  //   path: 'factory',
-  //   // loadComponent: () => import('./features/factory/factory.component').then(m => m.FactoryComponent),
-  //   canActivate: [RoleGuard],
-  //   data: { role: 'Factory' }
-  // },
-  // {
-  //   path: 'house',
-  //   // loadComponent: () => import('./features/house/house.component').then(m => m.HouseComponent),
-  //   canActivate: [RoleGuard],
-  //   data: { role: 'House' }
-  // }
-  ]
-},
-{
-path: 'house-products',
-loadComponent: () => import('./features/house-products/components/house-products.component').then(m => m.HouseProducts),
-canActivate: [AuthGuard ],
-},
-{ path: '**', redirectTo: 'auth/login' }
-
+    path: '',
+    component: AppComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'auth',
+    component: AppComponent,
+    // canActivate: [AuthGuard],
+    children: [
+      { path: '', redirectTo: 'login', pathMatch: 'full' },
+      {
+        path: 'login',
+        loadComponent: () =>
+          import('./features/auth/login/Components/login.component').then((m) => m.Login),
+      },
+      {
+        path: 'register',
+        loadComponent: () =>
+          import('./features/auth/register/components/register.component').then((m) => m.Register),
+      },
+      {
+        path: 'forgot-password',
+        loadComponent: () =>
+          import('./features/auth/forget-password/components/forget-password.component').then(
+            (m) => m.ForgetPassword
+          ),
+      },
+      {
+        path: 'verify-email',
+        loadComponent: () =>
+          import('./features/auth/verify-email/components/verify-email.component').then(
+            (m) => m.VerifyEmail
+          ),
+      },
+      { path: '', loadComponent: () => import('./app.component').then((m) => m.AppComponent) },
+      //     {
+      //   path: 'factory',
+      //   // loadComponent: () => import('./features/factory/factory.component').then(m => m.FactoryComponent),
+      //   canActivate: [RoleGuard],
+      //   data: { role: 'Factory' }
+      // },
+      // {
+      //   path: 'house',
+      //   // loadComponent: () => import('./features/house/house.component').then(m => m.HouseComponent),
+      //   canActivate: [RoleGuard],
+      //   data: { role: 'House' }
+      // }
+    ],
+  },
+  {
+    path: 'house-products',
+    loadComponent: () =>
+      import('./features/house-products/components/house-products.component').then(
+        (m) => m.HouseProducts
+      ),
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'product-details',
+    loadComponent: () =>
+      import('./features/product-details/components/product-details.component').then(
+        (m) => m.ProductDetails
+      ),
+    canActivate: [AuthGuard],
+  },
+  { path: '**', redirectTo: 'auth/login' },
 ];
