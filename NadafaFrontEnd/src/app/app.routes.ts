@@ -69,7 +69,6 @@ export const appRoutes: Routes = [
       import('./features/product-details/components/product-details.component').then(
         (m) => m.ProductDetails
       ),
-    canActivate: [AuthGuard],
   },
   { path: '**', redirectTo: 'auth/login' },
 ];
