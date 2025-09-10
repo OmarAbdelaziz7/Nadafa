@@ -15,3 +15,4 @@ namespace Infrastructure.Repositories
         Task<Notification> GetByIdAsync(Guid id);
     }
 }
+

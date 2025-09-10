@@ -12,3 +12,4 @@ namespace Application.Contracts
         Task<PurchaseResponseDto> UpdatePaymentStatusAsync(Guid purchaseId, UpdatePaymentStatusDto dto);
     }
 }
+
